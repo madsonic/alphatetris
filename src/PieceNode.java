@@ -43,7 +43,7 @@ public class PieceNode {
 	//update ExpectiMiniMax values
 	public void rootUpdate() {
 		for (BoardNode b : childBoards) {
-			b.update();
+			b.score = b.update();
 		}
 	}
 	
