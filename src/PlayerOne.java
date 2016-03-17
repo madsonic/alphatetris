@@ -26,14 +26,16 @@ public class PlayerOne{
 		
 		//Initialize depth
 		//every call to rootExpand expands the tree by 1 layer
+		//uncomment to increase depth
+
 		root.rootExpand();
-		root.rootExpand();
+		//root.rootExpand();
 		//root.rootExpand();
 
 		while(!s.hasLost()) {
 			root.rootExpand();
 			
-			//update minmax values
+			//update ExpectiMiniMax values
 			root.rootUpdate();
 			
 			s.makeMove(root.getBestMove());

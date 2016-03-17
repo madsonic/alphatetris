@@ -49,14 +49,13 @@ public class PieceNode {
 	
 	//Assumes nodes are updated
 	public int[] getBestMove() {
-		BoardNode best = childBoards[0];
+		bestNode = childBoards[0];
 		for (BoardNode bn : childBoards) {
-			if (best.compareTo(bn) < 0) {
-				best = bn;
+			if (bestNode.compareTo(bn) < 0) {
+				bestNode = bn;
 			}
 		}
-		bestNode = best;
-		return best.move;
+		return bestNode.move;
 	}
 	
 	//Set root node 
