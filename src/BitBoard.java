@@ -5,7 +5,7 @@
 public class BitBoard {
 	static final int ROWS = 20;
 	static final int COLS = 10;
-	int[][] field = new int[20][10];
+	int[][] field = new int[ROWS][COLS];
 	int[] top;
 	float score;
 	static int[][][] moves;
@@ -81,7 +81,13 @@ public class BitBoard {
 		}
 
 		//check if game ended
-		if(height+pHeight[nextPiece][orient] >= ROWS) return false;
+		if(height+pHeight[nextPiece][orient] >= ROWS) {
+			for (int c=0;c<COLS;c++){
+				top[c]=ROWS;
+			}
+			score = -11111111111f;
+			return false;
+		}
 
 
 		//for each column in the piece - fill in the appropriate blocks
@@ -132,14 +138,8 @@ public class BitBoard {
 	// TODO: refactoring this tgt with makeMoveP
 	public BitBoard makeMove(int orient, int slot, int nextPiece) {
 		BitBoard bb = new BitBoard(this.field, top);
-		if (bb.makeMoveP(orient, slot, nextPiece)){
-			return bb;
-		} else {
-			//endgame
-			bb.score = -111111111f;
-			return bb;
-		}
-		
+		bb.makeMoveP(orient, slot, nextPiece);
+		return bb;
 	}
 
 	public float calcHeuristic() {
