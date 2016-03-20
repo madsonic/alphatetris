@@ -13,11 +13,8 @@ public class PlayerOne{
 		State s = new State();
 		new TFrame(s);
 		
-		//initialize BitBoard statics
-		BitBoard.initMove(State.legalMoves);
-		
 		//initialize root node's parent bn
-		BitBoard bb = new BitBoard(s.getField(), s.getTop());
+		BitBoard bb = new BitBoardFullArray(s.getField(), s.getTop());
 		BoardNode bn = new BoardNode(null, bb , new int[] {1,1});
 		
 		//initialize root

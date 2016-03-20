@@ -14,7 +14,7 @@ public class BoardNode implements Comparable<BoardNode>{
 		this.parent = parent;
 		this.BoardState = state;
 		this.move = move;
-		this.score = state.score;
+		this.score = state.getScore();
 	}
 	
 	public void generatePieceNodes() {

@@ -23,7 +23,7 @@ public class PieceNode {
 	public void generateChildBoards() {
 		PriorityQueue<BoardNode> pq = new PriorityQueue<BoardNode>(64,Collections.reverseOrder());
 		BitBoard bb;
-		for ( int[] move : BitBoard.moves[pieceIndex] ) {
+		for ( int[] move : State.legalMoves[pieceIndex] ) {
 			 bb = parent.BoardState.makeMove(move[0], move[1],pieceIndex);
 			 pq.add(new BoardNode(this,bb,move));
 		}
