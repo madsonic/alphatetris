@@ -5,7 +5,7 @@ import java.util.PriorityQueue;
 //Given piece, maximize score.
 public class PieceNode {
 	// <=9 since the sqaure block only has 9 possible moves
-	static final int CHILD_NO = 2;
+	static int CHILD_NO = 2;
 	BoardNode parent;
 	final int pieceIndex;
 	BoardNode[] childBoards = new BoardNode[CHILD_NO];
@@ -13,6 +13,9 @@ public class PieceNode {
 	// slot and orientation
 	BoardNode bestNode;
 
+	static void setChildNum(int i) {
+		CHILD_NO = i;
+	}
 	public PieceNode(BoardNode parent, int pieceIndex) {
 		this.parent = parent;
 		this.pieceIndex = pieceIndex;
