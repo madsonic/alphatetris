@@ -4,15 +4,15 @@ import java.util.PriorityQueue;
 //Max player
 //Given piece, maximize score.
 public class PieceNode {
-	// <=9 since the sqaure block only has 9 possible moves
-	static int CHILD_NO = 2;
+	static int CHILD_NO;
 	BoardNode parent;
 	final int pieceIndex;
 	BoardNode[] childBoards = new BoardNode[CHILD_NO];
 
 	// slot and orientation
 	BoardNode bestNode;
-
+	
+	// <=9 since the sqaure block only has 9 possible moves
 	static void setChildNum(int i) {
 		CHILD_NO = i;
 	}

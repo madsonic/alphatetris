@@ -19,6 +19,7 @@ public class PlayerOne{
 		
 		//initialize root
 		//root always points to a PieceNode
+		PieceNode.setChildNum(2);
 		PieceNode root = new PieceNode(bn, s.nextPiece);
 		
 		//Initialize depth
