@@ -1,11 +1,6 @@
 //Each column is represented as a 32bit integer.
 public class BitBoardCol implements BitBoard {
     
-    private int weightBumpiness = 184;
-    private int weightHoles = 357;
-    private int weightCompleteLines = 761;
-    private int weightAggregateHeight = 510;
-    
     final static int COLS = 10;
 	final static int ROWS = 20;
 
@@ -15,7 +10,12 @@ public class BitBoardCol implements BitBoard {
 	int[] field;
 	float score;
 	
-	//heuristic variables
+	//heuristic weights
+	private int weightCompleteLines = 761;
+    private int weightAggregateHeight = 510;
+    private int weightBumpiness = 184;
+    private int weightHoles = 357;
+    
 	//simple off-the-shelf heuristic
 	int complete_lines;
 	int aggregate_height;
@@ -166,7 +166,10 @@ public class BitBoardCol implements BitBoard {
                 - weightBumpiness * bumpiness;
 	}
 
-	public void setWeightBumpiness(int newWeight) {
-	    weightBumpiness = newWeight;
+	public void setWeights(int[] weights) {
+	    weightCompleteLines = weights[0];
+	    weightAggregateHeight = weights[1];
+	    weightBumpiness = weights[2];
+	    weightHoles = weights[3];
 	}
 }
