@@ -1,6 +1,12 @@
 //Each column is represented as a 32bit integer.
 public class BitBoardCol implements BitBoard {
-	final static int COLS = 10;
+    
+    private int weightBumpiness = 184;
+    private int weightHoles = 357;
+    private int weightCompleteLines = 761;
+    private int weightAggregateHeight = 510;
+    
+    final static int COLS = 10;
 	final static int ROWS = 20;
 
 	//pieceBits[#pieces][#orient][#width][#height]
@@ -153,8 +159,14 @@ public class BitBoardCol implements BitBoard {
 			aggregate_height+=top[c];
 			holes += top[c] - Integer.bitCount(field[c]);
 		}
-		
-		return -510*aggregate_height +761*complete_lines -357*holes -184*bumpiness;
+
+        return -weightAggregateHeight * aggregate_height
+                + weightCompleteLines * complete_lines 
+                - weightHoles * holes
+                - weightBumpiness * bumpiness;
 	}
 
+	public void setWeightBumpiness(int newWeight) {
+	    weightBumpiness = newWeight;
+	}
 }
