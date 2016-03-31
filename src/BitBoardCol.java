@@ -1,7 +1,7 @@
 //Each column is represented as a 32bit integer.
 public class BitBoardCol implements BitBoard {
 	final static int COLS = 10;
-	final static int ROWS = 20;
+	static int ROWS = 20;
 
 	//pieceBits[#pieces][#orient][#width][#height]
 	static int pieceBits[][][][] = new int[7][4][4][ROWS];
@@ -56,6 +56,9 @@ public class BitBoardCol implements BitBoard {
 		{{2,2,1},{2,3}}
 	};
 
+	static void setRows(int rowNum) {
+		ROWS = rowNum;
+	}
 	static void initPieceBits() {
 		for (int p=0; p<7; p++) {
 			for (int o=0; o<pOrients[p]; o++) {
@@ -90,9 +93,9 @@ public class BitBoardCol implements BitBoard {
 		}
 
 		//check if game ended
-		if(height+pHeight[nextPiece][orient] >= ROWS) {
+		if(height+pHeight[nextPiece][orient] > ROWS) {
 			for (int c=0;c<COLS;c++){
-				top[c]=ROWS;
+				top[c]=ROWS+1;
 			}
 			score = -11111111111f;
 			return false;
