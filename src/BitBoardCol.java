@@ -9,7 +9,12 @@ public class BitBoardCol implements BitBoard {
 	int[] field;
 	float score;
 	
-	//heuristic variables
+	//heuristic weights
+	int weightCompleteLines = 761;
+    int weightAggregateHeight = 510;
+    int weightBumpiness = 184;
+    int weightHoles = 357;
+    
 	//simple off-the-shelf heuristic
 	int complete_lines;
 	int aggregate_height;
@@ -151,8 +156,11 @@ public class BitBoardCol implements BitBoard {
 			aggregate_height+=top[c];
 			holes += top[c] - Integer.bitCount(field[c]);
 		}
-		
-		return -510*aggregate_height +761*complete_lines -357*holes -184*bumpiness;
+
+        return -weightAggregateHeight * aggregate_height
+                + weightCompleteLines * complete_lines 
+                - weightHoles * holes
+                - weightBumpiness * bumpiness;
 	}
 
 	@Override
@@ -165,4 +173,10 @@ public class BitBoardCol implements BitBoard {
 		return ROWS*COLS - aggregate_height;
 	}
 
+	public void setWeights(int[] weights) {
+	    weightCompleteLines = weights[0];
+	    weightAggregateHeight = weights[1];
+	    weightBumpiness = weights[2];
+	    weightHoles = weights[3];
+	}
 }
