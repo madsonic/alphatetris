@@ -7,6 +7,8 @@ public interface BitBoard {
 
 	float calcHeuristic();
 
+	// Heuristic score at each state
 	float getScore();
 	
+	public float getValue();
 }

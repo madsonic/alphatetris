@@ -140,11 +140,6 @@ public class BitBoardCol implements BitBoard {
 	}
 
 	@Override
-	public float getScore() {
-		return score;
-	}
-
-	@Override
 	public float calcHeuristic() {
 		bumpiness = 0;
 		aggregate_height = 0;
@@ -158,6 +153,16 @@ public class BitBoardCol implements BitBoard {
 		}
 		
 		return -510*aggregate_height +761*complete_lines -357*holes -184*bumpiness;
+	}
+
+	@Override
+	public float getScore() {
+		return score;
+	}
+
+	@Override
+	public float getValue() {
+		return ROWS*COLS - aggregate_height;
 	}
 
 }

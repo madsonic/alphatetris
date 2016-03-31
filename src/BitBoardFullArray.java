@@ -161,4 +161,9 @@ public class BitBoardFullArray implements BitBoard {
 		return score;
 	}
 
+	@Override
+	public float getValue() {
+		return COLS*ROWS - aggregate_height;
+	}
+
 }
