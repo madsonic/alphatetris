@@ -1,3 +1,4 @@
+package main;
 //Expected/min player
 //Given board, get expected score.
 public class BoardNode implements Comparable<BoardNode>{
@@ -7,7 +8,7 @@ public class BoardNode implements Comparable<BoardNode>{
 	PieceNode[] childPieces = new PieceNode[7];
 
 	final int[] move;
-	float score;
+	double score;
 	boolean expanded = false;
 
 	public BoardNode(PieceNode parent, BitBoard state, int[] move) {
@@ -25,7 +26,7 @@ public class BoardNode implements Comparable<BoardNode>{
 	
 	//updates child nodes and returns expected Score.
 	//called by parent PieceNode
-	public float update(){
+	public double update(){
 		if (!expanded) return score;
 		float expected=0;
 		for (int i=1; i<7;i++) {

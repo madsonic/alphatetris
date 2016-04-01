@@ -1,3 +1,4 @@
+package main;
 //Adapted from the state.java
 //Each block is represented as a integer on int[][] field
 public class BitBoardFullArray implements BitBoard {
@@ -5,7 +6,7 @@ public class BitBoardFullArray implements BitBoard {
 	static final int COLS = 10;
 	int[][] field = new int[ROWS][COLS];
 	int[] top;
-	float score;
+	double score;
 	static int[][][] moves;
 	
 	//heuristic variables
@@ -136,7 +137,7 @@ public class BitBoardFullArray implements BitBoard {
 	}
 
 	@Override
-	public float calcHeuristic() {
+	public double calcHeuristic() {
 		bumpiness = 0;
 		aggregate_height = 0;
 		holes = 0;
@@ -157,12 +158,12 @@ public class BitBoardFullArray implements BitBoard {
 	}
 
 	@Override
-	public float getScore() {
+	public double getScore() {
 		return score;
 	}
 
 	@Override
-	public float getValue() {
+	public double getValue() {
 		return COLS*ROWS - aggregate_height;
 	}
 

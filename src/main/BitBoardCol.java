@@ -1,3 +1,4 @@
+package main;
 //Each column is represented as a 32bit integer.
 public class BitBoardCol implements BitBoard {
 	final static int COLS = 10;
@@ -7,13 +8,13 @@ public class BitBoardCol implements BitBoard {
 	static int pieceBits[][][][] = new int[7][4][4][ROWS];
 	int[] top;
 	int[] field;
-	float score;
+	double score;
 	
 	//heuristic weights
-	int weightCompleteLines = 761;
-    int weightAggregateHeight = 510;
-    int weightBumpiness = 184;
-    int weightHoles = 357;
+	double weightCompleteLines = 761;
+    double weightAggregateHeight = 510;
+    double weightBumpiness = 184;
+    double weightHoles = 357;
     
 	//simple off-the-shelf heuristic
 	int complete_lines;
@@ -64,7 +65,7 @@ public class BitBoardCol implements BitBoard {
 	static void setRows(int rowNum) {
 		ROWS = rowNum;
 	}
-	static void initPieceBits() {
+	public static void initPieceBits() {
 		for (int p=0; p<7; p++) {
 			for (int o=0; o<pOrients[p]; o++) {
 				for (int c=0; c<pWidth[p][o]; c++) {
@@ -145,7 +146,7 @@ public class BitBoardCol implements BitBoard {
 	}
 
 	@Override
-	public float calcHeuristic() {
+	public double calcHeuristic() {
 		bumpiness = 0;
 		aggregate_height = 0;
 		holes = 0;
@@ -164,16 +165,16 @@ public class BitBoardCol implements BitBoard {
 	}
 
 	@Override
-	public float getScore() {
+	public double getScore() {
 		return score;
 	}
 
 	@Override
-	public float getValue() {
+	public double getValue() {
 		return ROWS*COLS - aggregate_height;
 	}
 
-	public void setWeights(int[] weights) {
+	public void setWeights(double[] weights) {
 	    weightCompleteLines = weights[0];
 	    weightAggregateHeight = weights[1];
 	    weightBumpiness = weights[2];

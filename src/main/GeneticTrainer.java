@@ -1,3 +1,4 @@
+package main;
 import java.util.Arrays;
 
 
@@ -10,13 +11,13 @@ public class GeneticTrainer {
     private final static int MAX_NUM_WEIGHTS = 100;
     private final static int NUM_HEURISTICS = 4;
     private final static int PERCENT_BEST_REPRODUCE = 10;
-    private int[][] weights = new int[MAX_NUM_WEIGHTS][NUM_HEURISTICS];
+    private double[][] weights = new double[MAX_NUM_WEIGHTS][NUM_HEURISTICS];
     private Score[] scores = new Score[MAX_NUM_WEIGHTS];
     
     //initialize basic weights spread across the max weight values
     public void initializeWeights() {
         for (int i = 0; i < MAX_NUM_WEIGHTS; i += (MAX_WEIGHT_VALUE / MAX_NUM_WEIGHTS)) {
-            weights[i] = new int[] { i, i, i, i};
+            weights[i] = new double[] { i, i, i, i};
         }
     }
     

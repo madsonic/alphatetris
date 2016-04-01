@@ -1,8 +1,9 @@
+package main;
 //same as Player Two but with early termination after x moves.
 public class PartialPlayerTwo {
     public static final int MAX_MOVES = 10;
     
-    public int playGame(int[] weights) {
+    public int playGame(double[] weights) {
         State s = new State();
 
         // initialize root node's parent bn

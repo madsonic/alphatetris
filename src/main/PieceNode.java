@@ -1,3 +1,4 @@
+package main;
 import java.util.Collections;
 import java.util.PriorityQueue;
 
@@ -13,7 +14,7 @@ public class PieceNode {
 	BoardNode bestNode;
 	
 	// <=9 since the sqaure block only has 9 possible moves
-	static void setChildNum(int i) {
+	public static void setChildNum(int i) {
 		CHILD_NO = i;
 	}
 	public PieceNode(BoardNode parent, int pieceIndex) {
@@ -69,9 +70,9 @@ public class PieceNode {
 
 	//returns updated ExpectiMiniMax value.
 	//Called by parent BoardNode
-	public float update() {
-		float max = childBoards[0].update();
-		float temp;
+	public double update() {
+		double max = childBoards[0].update();
+		double temp;
 		for (BoardNode bn : childBoards) {
 			temp = bn.update();
 			if (max < temp) max = temp;
