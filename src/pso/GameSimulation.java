@@ -1,8 +1,18 @@
-//same as Player Two but with early termination after x moves.
-public class PartialPlayerTwo {
-    public static final int MAX_MOVES = 10;
-    
-    public int playGame(int[] weights) {
+package pso;
+
+import main.BitBoardCol;
+import main.BoardNode;
+import main.PieceNode;
+import main.State;
+
+public class GameSimulation {
+	
+	static final int MAX_MOVES = 100000;
+	
+	public GameSimulation() {	
+	}
+	
+	public int start(double[] weights) {
         State s = new State();
 
         // initialize root node's parent bn
@@ -34,14 +44,8 @@ public class PartialPlayerTwo {
             s.makeMove(root.getBestMove());
             // print_field(s);
             root = root.setRootToBest(s.nextPiece);
-
-            // try {
-            // Thread.sleep(300);
-            // } catch (InterruptedException e) {
-            // e.printStackTrace();
-            // }
         }
+        System.out.println("You have completed "+s.getRowsCleared()+" rows.");
         return s.getRowsCleared();
-    }
-
+	}
 }

@@ -1,3 +1,4 @@
+package main;
 import java.awt.Color;
 
 
@@ -30,7 +31,7 @@ public class State {
 	
 	
 	//number of next piece
-	protected int nextPiece;
+	public int nextPiece;
 	
 	
 	
