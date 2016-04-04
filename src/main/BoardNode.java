@@ -3,7 +3,7 @@ package main;
 //Given board, get expected score.
 public class BoardNode implements Comparable<BoardNode>{
 	final PieceNode parent;
-	final BitBoard BoardState;
+	public final BitBoardCol bb;
 	//7 PieceNodes, 1 for each shape
 	PieceNode[] childPieces = new PieceNode[7];
 
@@ -11,11 +11,17 @@ public class BoardNode implements Comparable<BoardNode>{
 	double score;
 	boolean expanded = false;
 
-	public BoardNode(PieceNode parent, BitBoard state, int[] move) {
+	public BoardNode(PieceNode parent, int[] move) {
 		this.parent = parent;
-		this.BoardState = state;
-		this.move = move;
-		this.score = state.getScore();
+		this.move  = move;
+		bb = new BitBoardCol(parent.parent.bb);
+		score = bb.makeMove(move[0], move[1], parent.pieceIndex);
+	}
+	
+	public BoardNode(BitBoardCol bb) {
+		parent = null;
+		move  = null;
+		this.bb = bb;
 	}
 	
 	public void generatePieceNodes() {
@@ -29,7 +35,7 @@ public class BoardNode implements Comparable<BoardNode>{
 	public double update(){
 		if (!expanded) return score;
 		float expected=0;
-		for (int i=1; i<7;i++) {
+		for (int i=0; i<State.N_PIECES;i++) {
 			expected += childPieces[i].update();
 		}
 		return expected/7;

@@ -1,14 +1,13 @@
 package main;
 //Each column is represented as a 32bit integer.
-public class BitBoardCol implements BitBoard {
+public class BitBoardCol {
+
 	final static int COLS = 10;
 	static int ROWS = 20;
-
-	//pieceBits[#pieces][#orient][#width][#height]
-	static int pieceBits[][][][] = new int[7][4][4][ROWS];
-	int[] top;
+	
+	//Board representation
 	int[] field;
-	double score;
+	int[] top;
 	
 	//heuristic weights
 	static double weightCompleteLines;
@@ -29,50 +28,18 @@ public class BitBoardCol implements BitBoard {
 	int landing_height;
 
 	//States for the 7 peices
-	static int[] pOrients = {1,2,4,4,4,2,2};
+	static int[] pOrients = State.getpOrients();
+	static int[][] pWidth = State.getpWidth();
+	static int[][] pHeight = State.getpHeight();
+	static int[][][] pBottom = State.getpBottom();
+	static int[][][] pTop = State.getpTop();
+	
+	//pieceBits[#pieces][#orient][#width][#height]
+	static int pieceBits[][][][] = new int[7][4][4][ROWS];
 
-	static int[][] pWidth = {
-			{2},
-			{1,4},
-			{2,3,2,3},
-			{2,3,2,3},
-			{2,3,2,3},
-			{3,2},
-			{3,2}
-	};
-	static int[][] pHeight = {
-			{2},
-			{4,1},
-			{3,2,3,2},
-			{3,2,3,2},
-			{3,2,3,2},
-			{2,3},
-			{2,3}
-	};
-	static int[][][] pBottom = {
-		{{0,0}},
-		{{0},{0,0,0,0}},
-		{{0,0},{0,1,1},{2,0},{0,0,0}},
-		{{0,0},{0,0,0},{0,2},{1,1,0}},
-		{{0,1},{1,0,1},{1,0},{0,0,0}},
-		{{0,0,1},{1,0}},
-		{{1,0,0},{0,1}}
-	};
-	static int[][][] pTop = {
-		{{2,2}},
-		{{4},{1,1,1,1}},
-		{{3,1},{2,2,2},{3,3},{1,1,2}},
-		{{1,3},{2,1,1},{3,3},{2,2,2}},
-		{{3,2},{2,2,2},{2,3},{1,2,1}},
-		{{1,2,2},{3,2}},
-		{{2,2,1},{2,3}}
-	};
-
-	static void setRows(int rowNum) {
-		ROWS = rowNum;
-	}
-	public static void initPieceBits() {
-		for (int p=0; p<7; p++) {
+	//Initialize pieceBits
+	static {
+		for (int p=0; p<State.N_PIECES; p++) {
 			for (int o=0; o<pOrients[p]; o++) {
 				for (int c=0; c<pWidth[p][o]; c++) {
 					for(int h=pBottom[p][o][c]; h<pTop[p][o][c]; h++) {
@@ -86,16 +53,27 @@ public class BitBoardCol implements BitBoard {
 		}
 	}
 
+	static void setRows(int rowNum) {
+		ROWS = rowNum;
+	}
+
 	static int getBit( int bitCol, int rowIndex) {
 		return (bitCol >> rowIndex) & 1;
 	}
 
+	//Constructor
 	public BitBoardCol( int[] field, int[] top) {
 		this.field = field.clone();
 		this.top = top.clone();
 	}
 
-	public boolean makeMoveP(int orient, int slot, int nextPiece) {
+	//Constructor
+	public BitBoardCol(BitBoardCol bb) {
+		this.field = bb.field.clone();
+		this.top = bb.top.clone();
+	}
+	
+	public double makeMove(int orient, int slot, int nextPiece) {
 		//height if the first column makes contact
 		int height = top[slot]-pBottom[nextPiece][orient][0];
 
@@ -109,8 +87,7 @@ public class BitBoardCol implements BitBoard {
 			for (int c=0;c<COLS;c++){
 				top[c]=ROWS+1;
 			}
-			score = -11111111111f;
-			return false;
+			return Integer.MIN_VALUE;
 		}
 
 		//for each column in the piece - fill in the appropriate blocks
@@ -123,12 +100,12 @@ public class BitBoardCol implements BitBoard {
 		for (int r=1; r<COLS;r++) {
 			rowFullBits &= field[r];
 		}
-		complete_lines = Integer.bitCount(rowFullBits);
 
 		//check for full rows - starting at the top
 		for(int r = height+pHeight[nextPiece][orient]-1; r >= height; r--) {
 			//if the row was full - remove it and slide above stuff down
 			if(getBit(rowFullBits,r)==1) {
+				complete_lines++;
 				//for each column
 				for(int c = 0; c < COLS; c++) {
 					//slide down all bricks
@@ -140,24 +117,10 @@ public class BitBoardCol implements BitBoard {
 		for (int c=0; c<COLS; c++) {
 			top[c] = 32 - Integer.numberOfLeadingZeros(field[c]);
 		}
-		score = calcHeuristic();
-		return true;
-	}
-	
-	@Override
-	public BitBoardCol makeMove(int orient, int slot, int nextPiece) {
-		BitBoardCol bb = new BitBoardCol(field, top);
-		bb.makeMoveP(orient, slot, nextPiece);
-		return bb;
+		return calcHeuristic();
 	}
 
-	@Override
 	public double calcHeuristic() {
-		bumpiness = 0;
-		aggregate_height = 0;
-		holes = 0;
-		col_transitions = 0;
-		row_transitions = 0;
 		int bit1;
 		int bit2;
 		for (int c=0;c<COLS-1;c++){
@@ -182,18 +145,11 @@ public class BitBoardCol implements BitBoard {
                 - weightLandingHeight * landing_height;
 	}
 
-	@Override
-	public double getScore() {
-		return score;
-	}
-
-	@Override
-	public double getValue() {
+	public double getReward() {
 		return ROWS*COLS - aggregate_height;
 	}
-	
-	@Override
-	public void setWeights(double[] weights) {
+
+	public static void setWeights(double[] weights) {
 	    weightCompleteLines = weights[0];
 	    weightAggregateHeight = weights[1];
 	    weightBumpiness = weights[2];

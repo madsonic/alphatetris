@@ -11,12 +11,14 @@ public class PieceNode {
 	BoardNode[] childBoards = new BoardNode[CHILD_NO];
 
 	// slot and orientation
-	BoardNode bestNode;
+	public BoardNode bestNode;
 	
 	// <=9 since the sqaure block only has 9 possible moves
 	public static void setChildNum(int i) {
 		CHILD_NO = i;
 	}
+	
+	//Constructor
 	public PieceNode(BoardNode parent, int pieceIndex) {
 		this.parent = parent;
 		this.pieceIndex = pieceIndex;
@@ -26,10 +28,8 @@ public class PieceNode {
 	//Iterate though possible next moves, keep top k
 	public void generateChildBoards() {
 		PriorityQueue<BoardNode> pq = new PriorityQueue<BoardNode>(64,Collections.reverseOrder());
-		BitBoard bb;
 		for ( int[] move : State.legalMoves[pieceIndex] ) {
-			 bb = parent.BoardState.makeMove(move[0], move[1],pieceIndex);
-			 pq.add(new BoardNode(this,bb,move));
+			 pq.add(new BoardNode(this,move));
 		}
 		//Keep top k BoardNodes
 		for (int i=0;i<childBoards.length;i++) {
