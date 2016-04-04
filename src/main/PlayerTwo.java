@@ -17,6 +17,9 @@ public class PlayerTwo{
 		//initialize root node's parent bn
 		BitBoardCol.initPieceBits();
 		BitBoard bb = new BitBoardCol(new int[10],s.getTop());
+		bb.setWeights(new double[] { -51.60664832781422, 14.412817176215912,
+				20.815265867296894, 75.98173950628988,
+				12.088312420164678, -31.89757332137397, 47.513572649171685 });
 		BoardNode bn = new BoardNode(null, bb , new int[] {1,1});
 		
 		//initialize root

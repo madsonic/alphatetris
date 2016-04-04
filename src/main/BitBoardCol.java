@@ -11,16 +11,22 @@ public class BitBoardCol implements BitBoard {
 	double score;
 	
 	//heuristic weights
-	double weightCompleteLines = 761;
-    double weightAggregateHeight = 510;
-    double weightBumpiness = 184;
-    double weightHoles = 357;
+	static double weightCompleteLines;
+    static double weightAggregateHeight;
+    static double weightBumpiness;
+    static double weightHoles;
+    static double weightColTrans;
+    static double weightRowTrans;
+    static double weightLandingHeight;
     
-	//simple off-the-shelf heuristic
+	//heuristic parameters
 	int complete_lines;
 	int aggregate_height;
 	int bumpiness;
 	int holes;
+	int col_transitions;
+	int row_transitions;
+	int landing_height;
 
 	//States for the 7 peices
 	static int[] pOrients = {1,2,4,4,4,2,2};
@@ -97,7 +103,7 @@ public class BitBoardCol implements BitBoard {
 		for(int c = 1; c < pWidth[nextPiece][orient];c++) {
 			height = Math.max(height,top[slot+c]-pBottom[nextPiece][orient][c]);
 		}
-
+		landing_height = height;
 		//check if game ended
 		if(height+pHeight[nextPiece][orient] > ROWS) {
 			for (int c=0;c<COLS;c++){
@@ -150,18 +156,30 @@ public class BitBoardCol implements BitBoard {
 		bumpiness = 0;
 		aggregate_height = 0;
 		holes = 0;
+		col_transitions = 0;
+		row_transitions = 0;
+		int bit1;
+		int bit2;
 		for (int c=0;c<COLS-1;c++){
 			bumpiness += Math.abs(top[c]-top[c+1]);
 		}
 		for (int c=0; c<COLS; c++){
 			aggregate_height+=top[c];
 			holes += top[c] - Integer.bitCount(field[c]);
+			bit1 = 1;
+            for (int r=top[c]-1; r>=0; r--){
+                bit2 = getBit(c,r);
+                col_transitions += (bit1 ^ bit2) & bit1;
+            }
 		}
 
-        return -weightAggregateHeight * aggregate_height
+        return  - weightAggregateHeight * aggregate_height
                 + weightCompleteLines * complete_lines 
                 - weightHoles * holes
-                - weightBumpiness * bumpiness;
+                - weightBumpiness * bumpiness
+                - weightColTrans * col_transitions
+                - weightRowTrans * row_transitions
+                - weightLandingHeight * landing_height;
 	}
 
 	@Override
@@ -173,11 +191,15 @@ public class BitBoardCol implements BitBoard {
 	public double getValue() {
 		return ROWS*COLS - aggregate_height;
 	}
-
+	
+	@Override
 	public void setWeights(double[] weights) {
 	    weightCompleteLines = weights[0];
 	    weightAggregateHeight = weights[1];
 	    weightBumpiness = weights[2];
 	    weightHoles = weights[3];
+	    weightColTrans = weights[4];
+	    weightRowTrans = weights[5];
+	    weightLandingHeight = weights[6];
 	}
 }

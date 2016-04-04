@@ -12,4 +12,6 @@ public interface BitBoard {
 	double getScore();
 	
 	public double getValue();
+
+	void setWeights(double[] weights);
 }
