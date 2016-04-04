@@ -13,6 +13,7 @@ public class PlayerTwo{
 	public static void main(String[] args) {
 		State s = new State();
 		new TFrame(s);
+		int total_score = 0;
 		
 		//initialize root node's parent bn
 		BitBoardCol.initPieceBits();
@@ -37,6 +38,9 @@ public class PlayerTwo{
 		//root.rootExpand();
 
 		while(!s.hasLost()) {
+            if (s.getTurnNumber()%2000 == 1) {
+				System.out.println(s.getTurnNumber() + ": "+total_score/s.getTurnNumber());
+            }
 			root.rootExpand();
 			
 			//update ExpectiMiniMax values
@@ -48,6 +52,7 @@ public class PlayerTwo{
 			s.draw();
 			s.drawNext(0,0);
 
+			total_score += root.bestNode.BoardState.getValue();
 			root = root.setRootToBest(s.nextPiece);
 
 //			try {
