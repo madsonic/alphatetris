@@ -27,6 +27,17 @@ public class BitBoardCol {
 	int row_transitions;
 	int landing_height;
 
+  /**
+   * The 7 piece shapes by index:
+   * 0: O
+   * 1: I
+   * 2: L
+   * 3: J
+   * 4: T
+   * 5: S
+   * 6: Z
+   */
+
 	//States for the 7 peices
 	static int[] pOrients = State.getpOrients();
 	static int[][] pWidth = State.getpWidth();
