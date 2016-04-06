@@ -74,7 +74,34 @@ public class PieceNode {
 			b.score = b.update();
 		}
 	}
-	
+
+	//returns updated ExpectiMiniMax value.
+	//Called by parent BoardNode
+	public double update() {
+		double max = childBoards[0].update();
+		double temp;
+		for (BoardNode bn : childBoards) {
+			temp = bn.update();
+			if (max < temp) max = temp;
+		}
+		return max;
+	}
+
+	// For multiprocess, b.update() can only run after
+	// all of b's PieceNode p has expanded
+	public void rootExpandAndUpdate() {
+		if (!expanded) {
+			generateChildBoards();
+		} else {
+			for (BoardNode b : childBoards) {
+				for (PieceNode p : b.childPieces) {
+					p.expand();
+				}
+				b.score = b.update();
+			}
+		}
+	}
+
 	//Assumes nodes are updated
 	public int[] getBestMove() {
 		bestNode = childBoards[0];
@@ -92,21 +119,4 @@ public class PieceNode {
 		return bestNode.childPieces[nextPiece];
 	}
 
-	//returns updated ExpectiMiniMax value.
-	//Called by parent BoardNode
-	public double update() {
-		double max = childBoards[0].update();
-		double temp;
-		for (BoardNode bn : childBoards) {
-			temp = bn.update();
-			if (max < temp) max = temp;
-		}
-		return max;
-	}
-
-	// TODO: Expand and update in one tree traversal.
-	// Might be faster
-	public void expandAndUpdate() {
-		
-	}
 }

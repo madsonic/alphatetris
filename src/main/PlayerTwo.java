@@ -34,11 +34,13 @@ public class PlayerTwo{
 		//Initialize depth
 		//every call to rootExpand expands the tree by 1 layer
 		//uncomment to increase depth
+		//last call must be rootExpandAndUpdate
 
 		root.rootExpand();
 		//root.rootExpand();
 		//root.rootExpand();
 		//root.rootExpand();
+		root.rootExpandAndUpdate();
 
 		while(!s.hasLost()) {
 
@@ -49,7 +51,7 @@ public class PlayerTwo{
             }
             
 			//update ExpectiMiniMax values
-			root.rootUpdate();
+			//root.rootUpdate();
 			s.makeMove(root.getBestMove());
 			
 			s.draw();
@@ -57,8 +59,8 @@ public class PlayerTwo{
 
 			total_reward+= root.bestNode.bb.getReward();
 			root = root.setRootToBest(s.nextPiece);
-			root.rootExpand();
-
+			//root.rootExpand();
+			root.rootExpandAndUpdate();
 		}
 		System.out.println("You have completed "+s.getRowsCleared()+" rows.");
 		//return s.getRowsCleared or total_reward for training simulations
