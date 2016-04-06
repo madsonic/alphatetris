@@ -1,5 +1,4 @@
 package main;
-import java.util.Collections;
 import java.util.PriorityQueue;
 
 //Max player
@@ -28,14 +27,18 @@ public class PieceNode {
 	//Iterate though possible next moves, keep top k
 	public void generateChildBoards() {
 		expanded = true;
-		PriorityQueue<BoardNode> pq = new PriorityQueue<BoardNode>(64,Collections.reverseOrder());
-		for ( int[] move : State.legalMoves[pieceIndex] ) {
-			 pq.add(new BoardNode(this,move));
+		PriorityQueue<BoardNode> pq = new PriorityQueue<BoardNode>(32);
+		int[][] moves = State.legalMoves[pieceIndex];
+
+		for (int i = 0; i < CHILD_NO; i++) {
+			pq.add(new BoardNode(this,moves[i]));
 		}
-		//Keep top k BoardNodes
-		for (int i=0;i<childBoards.length;i++) {
-			childBoards[i] = pq.poll(); 
+		for (int i = CHILD_NO; i < moves.length; i++) {
+			pq.add(new BoardNode(this,moves[i]));
+			pq.poll();
 		}
+
+		pq.toArray(childBoards);
 	}
 
 	//Sends command to increase depth by 1
