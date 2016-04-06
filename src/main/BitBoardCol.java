@@ -150,8 +150,8 @@ public class BitBoardCol {
 	}
 
 	public static void setWeights(double[] weights) {
-	    weightCompleteLines = weights[0];
-	    weightAggregateHeight = weights[1];
+		weightAggregateHeight = weights[0];
+	    weightCompleteLines = weights[1];
 	    weightBumpiness = weights[2];
 	    weightHoles = weights[3];
 	    weightColTrans = weights[4];

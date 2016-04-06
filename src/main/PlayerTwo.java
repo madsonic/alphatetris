@@ -31,12 +31,11 @@ public class PlayerTwo{
 		//root always points to a PieceNode
 		PieceNode root = new PieceNode(bn, s.nextPiece);
 
-		
 		//Initialize depth
 		//every call to rootExpand expands the tree by 1 layer
 		//uncomment to increase depth
 
-		//root.rootExpand();
+		root.rootExpand();
 		//root.rootExpand();
 		//root.rootExpand();
 		//root.rootExpand();
@@ -48,7 +47,7 @@ public class PlayerTwo{
 						+ "   Avg reward: " + total_reward/s.getTurnNumber()
 						+ "   Lines cleared: " + s.getRowsCleared());
             }
-            root.rootExpand();
+            
 			//update ExpectiMiniMax values
 			root.rootUpdate();
 			s.makeMove(root.getBestMove());
@@ -58,8 +57,10 @@ public class PlayerTwo{
 
 			total_reward+= root.bestNode.bb.getReward();
 			root = root.setRootToBest(s.nextPiece);
+			root.rootExpand();
 
 		}
 		System.out.println("You have completed "+s.getRowsCleared()+" rows.");
+		//return s.getRowsCleared or total_reward for training simulations
 	}
 }

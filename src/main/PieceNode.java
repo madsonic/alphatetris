@@ -9,6 +9,7 @@ public class PieceNode {
 	BoardNode parent;
 	final int pieceIndex;
 	BoardNode[] childBoards = new BoardNode[CHILD_NO];
+	boolean expanded;
 
 	// slot and orientation
 	public BoardNode bestNode;
@@ -22,11 +23,11 @@ public class PieceNode {
 	public PieceNode(BoardNode parent, int pieceIndex) {
 		this.parent = parent;
 		this.pieceIndex = pieceIndex;
-		generateChildBoards();
 	}
 	
 	//Iterate though possible next moves, keep top k
 	public void generateChildBoards() {
+		expanded = true;
 		PriorityQueue<BoardNode> pq = new PriorityQueue<BoardNode>(64,Collections.reverseOrder());
 		for ( int[] move : State.legalMoves[pieceIndex] ) {
 			 pq.add(new BoardNode(this,move));
@@ -38,12 +39,32 @@ public class PieceNode {
 	}
 
 	//Sends command to increase depth by 1
+	//Multi-process here
 	public void rootExpand() {
-		for (BoardNode b : childBoards) {
-			b.expand();
+		if (!expanded) {
+			generateChildBoards();
+		} else {
+			for (BoardNode b : childBoards) {
+				for (PieceNode p : b.childPieces) {
+					p.expand();
+				}
+			}
 		}
 	}
-	
+
+	//Sends command to increase depth by 1
+	public void expand() {
+		if (!expanded) {
+			generateChildBoards();
+		} else {
+			for (BoardNode b : childBoards) {
+				for (PieceNode p : b.childPieces) {
+					p.expand();
+				}
+			}
+		}
+	}
+
 	//update ExpectiMiniMax values
 	public void rootUpdate() {
 		for (BoardNode b : childBoards) {
