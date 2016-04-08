@@ -11,12 +11,12 @@ public class BitBoardCol {
 	
 	//heuristic weights
 	static double weightCompleteLines;
-    static double weightAggregateHeight;
-    static double weightBumpiness;
-    static double weightHoles;
-    static double weightColTrans;
-    static double weightRowTrans;
-    static double weightLandingHeight;
+	static double weightAggregateHeight;
+	static double weightBumpiness;
+	static double weightHoles;
+	static double weightColTrans;
+	static double weightRowTrans;
+	static double weightLandingHeight;
     
 	//heuristic parameters
 	int complete_lines;
@@ -54,7 +54,7 @@ public class BitBoardCol {
 			for (int o=0; o<pOrients[p]; o++) {
 				for (int c=0; c<pWidth[p][o]; c++) {
 					for(int h=pBottom[p][o][c]; h<pTop[p][o][c]; h++) {
-						pieceBits[p][o][c][0] |= 1 << h;
+						pieceBits[p][o][c][0] |= 1 << h; //
 					}
 					for (int r=0; r<ROWS; r++) {
 						pieceBits[p][o][c][r] = pieceBits[p][o][c][0] << r;

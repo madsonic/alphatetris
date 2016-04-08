@@ -44,11 +44,11 @@ public class PlayerTwo{
 
 		while(!s.hasLost()) {
 
-            if (s.getTurnNumber()%1000 == 500) {
-				System.out.println("Turn num: "+ s.getTurnNumber()
-						+ "   Avg reward: " + total_reward/s.getTurnNumber()
-						+ "   Lines cleared: " + s.getRowsCleared());
-            }
+			if (s.getTurnNumber()%1000 == 500) {
+			System.out.println("Turn num: "+ s.getTurnNumber()
+			+ "   Avg reward: " + total_reward/s.getTurnNumber()
+			+ "   Lines cleared: " + s.getRowsCleared());
+			}
             
 			//update ExpectiMiniMax values
 			//root.rootUpdate();

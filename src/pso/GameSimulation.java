@@ -16,7 +16,6 @@ public class GameSimulation {
         State s = new State();
 
         // initialize root node's parent bn
-        BitBoardCol.initPieceBits();
         BitBoardCol bb = new BitBoardCol(new int[10], s.getTop());
         BoardNode bn = new BoardNode(null, bb, new int[] { 1, 1 });
         bb.setWeights(weights);
