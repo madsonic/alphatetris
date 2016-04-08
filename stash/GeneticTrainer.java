@@ -1,11 +1,9 @@
-package main;
+package ga;
 import java.util.Arrays;
 import java.util.Random;
 
 
-
 public class GeneticTrainer {
-    
     private PartialPlayerTwo player = new PartialPlayerTwo();
     
     private final static double MAX_WEIGHT_VALUE = 100;
