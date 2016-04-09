@@ -4,11 +4,11 @@ public class BitBoardCol {
 
 	final static int COLS = 10;
 	static int ROWS = 20;
-	
+
 	//Board representation
 	int[] field;
 	int[] top;
-	
+
 	//heuristic weights
 	static double weightCompleteLines;
 	static double weightAggregateHeight;
@@ -17,7 +17,7 @@ public class BitBoardCol {
 	static double weightColTrans;
 	static double weightRowTrans;
 	static double weightLandingHeight;
-    
+
 	//heuristic parameters
 	int complete_lines;
 	int aggregate_height;
@@ -27,37 +27,37 @@ public class BitBoardCol {
 	int row_transitions;
 	int landing_height;
 
-  /**
-   * The 7 piece shapes by index:
-   * 0: O
-   * 1: I
-   * 2: L
-   * 3: J
-   * 4: T
-   * 5: S
-   * 6: Z
-   */
+	/**
+	 * The 7 piece shapes by index:
+	 * 0: O
+	 * 1: I
+	 * 2: L
+	 * 3: J
+	 * 4: T
+	 * 5: S
+	 * 6: Z
+	 */
 
-	//States for the 7 peices
-	static int[] pOrients = State.getpOrients();
-	static int[][] pWidth = State.getpWidth();
-	static int[][] pHeight = State.getpHeight();
-	static int[][][] pBottom = State.getpBottom();
-	static int[][][] pTop = State.getpTop();
-	
-	//pieceBits[#pieces][#orient][#width][#height]
-	static int pieceBits[][][][] = new int[7][4][4][ROWS];
+	//States for the 7 pieces
+	final static int[] P_ORIENTS = State.getpOrients();
+	final static int[][] P_WIDTH = State.getpWidth();
+	final static int[][] P_HEIGHT = State.getpHeight();
+	final static int[][][] P_BOTTOM = State.getpBottom();
+	final static int[][][] P_TOP = State.getpTop();
 
-	//Initialize pieceBits
+	//PIECE_BITS[#pieces][#orient][#width][#height]
+	final static int PIECE_BITS[][][][] = new int[7][4][4][ROWS];
+
+	//Initialize PIECE_BITS
 	static {
 		for (int p=0; p<State.N_PIECES; p++) {
-			for (int o=0; o<pOrients[p]; o++) {
-				for (int c=0; c<pWidth[p][o]; c++) {
-					for(int h=pBottom[p][o][c]; h<pTop[p][o][c]; h++) {
-						pieceBits[p][o][c][0] |= 1 << h; //
+			for (int o = 0; o< P_ORIENTS[p]; o++) {
+				for (int c = 0; c< P_WIDTH[p][o]; c++) {
+					for(int h = P_BOTTOM[p][o][c]; h< P_TOP[p][o][c]; h++) {
+						PIECE_BITS[p][o][c][0] |= 1 << h; //
 					}
 					for (int r=0; r<ROWS; r++) {
-						pieceBits[p][o][c][r] = pieceBits[p][o][c][0] << r;
+						PIECE_BITS[p][o][c][r] = PIECE_BITS[p][o][c][0] << r;
 					}
 				}
 			}
@@ -83,18 +83,18 @@ public class BitBoardCol {
 		this.field = bb.field.clone();
 		this.top = bb.top.clone();
 	}
-	
+
 	public double makeMove(int orient, int slot, int nextPiece) {
 		//height if the first column makes contact
-		int height = top[slot]-pBottom[nextPiece][orient][0];
+		int height = top[slot]- P_BOTTOM[nextPiece][orient][0];
 
 		//for each column beyond the first in the piece
-		for(int c = 1; c < pWidth[nextPiece][orient];c++) {
-			height = Math.max(height,top[slot+c]-pBottom[nextPiece][orient][c]);
+		for(int c = 1; c < P_WIDTH[nextPiece][orient]; c++) {
+			height = Math.max(height,top[slot+c]- P_BOTTOM[nextPiece][orient][c]);
 		}
 		landing_height = height;
 		//check if game ended
-		if(height+pHeight[nextPiece][orient] > ROWS) {
+		if(height+ P_HEIGHT[nextPiece][orient] > ROWS) {
 			for (int c=0;c<COLS;c++){
 				top[c]=ROWS+1;
 			}
@@ -102,9 +102,9 @@ public class BitBoardCol {
 		}
 
 		//for each column in the piece - fill in the appropriate blocks
-		//Alt: Use bit shift operation instead of storing pieceBits at different height.
-		for(int c = 0; c < pWidth[nextPiece][orient]; c++) {
-			field[c+slot] |= pieceBits[nextPiece][orient][c][height];
+		//Alt: Use bit shift operation instead of storing PIECE_BITS at different height.
+		for(int c = 0; c < P_WIDTH[nextPiece][orient]; c++) {
+			field[c+slot] |= PIECE_BITS[nextPiece][orient][c][height];
 		}
 
 		int rowFullBits = field[0];
@@ -113,7 +113,7 @@ public class BitBoardCol {
 		}
 
 		//check for full rows - starting at the top
-		for(int r = height+pHeight[nextPiece][orient]-1; r >= height; r--) {
+		for(int r = height+ P_HEIGHT[nextPiece][orient]-1; r >= height; r--) {
 			//if the row was full - remove it and slide above stuff down
 			if(getBit(rowFullBits,r)==1) {
 				complete_lines++;
@@ -141,19 +141,19 @@ public class BitBoardCol {
 			aggregate_height+=top[c];
 			holes += top[c] - Integer.bitCount(field[c]);
 			bit1 = 1;
-            for (int r=top[c]-1; r>=0; r--){
-                bit2 = getBit(c,r);
-                col_transitions += (bit1 ^ bit2) & bit1;
-            }
+			for (int r=top[c]-1; r>=0; r--){
+				bit2 = getBit(c,r);
+				col_transitions += (bit1 ^ bit2) & bit1;
+			}
 		}
 
-        return  - weightAggregateHeight * aggregate_height
-                + weightCompleteLines * complete_lines 
-                - weightHoles * holes
-                - weightBumpiness * bumpiness
-                - weightColTrans * col_transitions
-                - weightRowTrans * row_transitions
-                - weightLandingHeight * landing_height;
+		return  - weightAggregateHeight * aggregate_height
+				+ weightCompleteLines * complete_lines
+				- weightHoles * holes
+				- weightBumpiness * bumpiness
+				- weightColTrans * col_transitions
+				- weightRowTrans * row_transitions
+				- weightLandingHeight * landing_height;
 	}
 
 	public double getReward() {
@@ -162,11 +162,11 @@ public class BitBoardCol {
 
 	public static void setWeights(double[] weights) {
 		weightAggregateHeight = weights[0];
-	    weightCompleteLines = weights[1];
-	    weightBumpiness = weights[2];
-	    weightHoles = weights[3];
-	    weightColTrans = weights[4];
-	    weightRowTrans = weights[5];
-	    weightLandingHeight = weights[6];
+		weightCompleteLines = weights[1];
+		weightBumpiness = weights[2];
+		weightHoles = weights[3];
+		weightColTrans = weights[4];
+		weightRowTrans = weights[5];
+		weightLandingHeight = weights[6];
 	}
 }

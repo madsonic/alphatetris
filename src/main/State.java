@@ -9,14 +9,7 @@ public class State {
 	public static final int ROWS = 21;
 	public static final int N_PIECES = 7;
 
-	
-
 	public boolean lost = false;
-	
-	
-	
-
-	
 	public TLabel label;
 	
 	//current turn
@@ -28,12 +21,9 @@ public class State {
 	//top row+1 of each column
 	//0 means empty
 	private int[] top = new int[COLS];
-	
-	
+
 	//number of next piece
 	public int nextPiece;
-	
-	
 	
 	//all legal moves - first index is piece type - then a list of 2-length arrays
 	protected static int[][][] legalMoves = new int[N_PIECES][][];
@@ -108,7 +98,6 @@ public class State {
 				}
 			}
 		}
-	
 	}
 	
 	
