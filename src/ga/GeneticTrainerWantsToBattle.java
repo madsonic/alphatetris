@@ -39,7 +39,7 @@ public class GeneticTrainerWantsToBattle {
         // actual training begins here
         for (int i = 0; i < MAX_ALLOWED_EVOLUTIONS; i++) {
             population.evolve();
-            System.out.println("I'm still alive!");
+            System.out.println("Evolution: " + i);
         }
 
         IChromosome bestSolution = population.getFittestChromosome();

@@ -11,7 +11,7 @@ public class PartialPlayerTwo {
     public static final int MAX_MOVES = 10000;
 
     // returns fitness function
-    public int playGame(double[] weights) {
+    public int exploreMoves(double[] weights) {
         State s = new State();
 
         int total_reward = 0;
@@ -61,7 +61,7 @@ public class PartialPlayerTwo {
     }
     
     // plays the game for real and returns rows cleared
-    public int reallyPlayGame(double[] weights) {
+    public int playGame(double[] weights) {
         State s = new State();
 
         // Set static weights and childNum
