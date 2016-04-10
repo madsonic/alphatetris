@@ -10,22 +10,31 @@ public class BitBoardCol {
 	int[] top;
 
 	//heuristic weights
-	static double weightCompleteLines;
 	static double weightAggregateHeight;
-	static double weightBumpiness;
+	static double weightCompleteLines;
 	static double weightHoles;
 	static double weightColTrans;
 	static double weightRowTrans;
 	static double weightLandingHeight;
+    static double weightTopParity;
+    static double weightTopVariety;
+    static double weightMiniMaxTop;
+    static double weightSideBump;
+	static double weightBumpiness;
 
 	//heuristic parameters
-	int complete_lines;
 	int aggregate_height;
-	int bumpiness;
+	int complete_lines;
 	int holes;
 	int col_transitions;
 	int row_transitions;
 	int landing_height;
+	int top_parity;
+	int top_variety;
+	int mini_max_top;
+	int side_bump;
+	int bumpiness;
+
 
 	/**
 	 * The 7 piece shapes by index:
@@ -132,28 +141,64 @@ public class BitBoardCol {
 	}
 
 	public double calcHeuristic() {
-		int bit1;
-		int bit2;
-		for (int c=0;c<COLS-1;c++){
-			bumpiness += Math.abs(top[c]-top[c+1]);
+		int bit1, bit2;
+		int top_max=0;
+		int top_min=20;
+		int[] varietyArr = new int[5];
+
+		for (int i : top) {
+			top_max = Math.max(i, top_max);
+			top_min = Math.min(i, top_min);
 		}
+
+		for (int c=0;c<COLS-1;c++){
+			bit1 = top[c]-top[c+1];
+			bumpiness += Math.abs(bit1);
+			if (bit1 == -2 || bit1 == 2) varietyArr[bit1+2] = 1;
+			if (bit1 == -1 || bit1 == 1) varietyArr[bit1+2] = 2;
+			if (bit1 == 0) varietyArr[bit1+2] = 2;
+		}
+
+		for ( int b: varietyArr ) top_variety += b;
+
+		mini_max_top = top_max - top_min;
+		side_bump = Math.abs(top[9]-top[8]) + Math.abs(top[0]-top[1]);
+		
 		for (int c=0; c<COLS; c++){
 			aggregate_height+=top[c];
 			holes += top[c] - Integer.bitCount(field[c]);
 			bit1 = 1;
-			for (int r=top[c]-1; r>=0; r--){
-				bit2 = getBit(c,r);
-				col_transitions += (bit1 ^ bit2) & bit1;
-			}
+            for (int r=1; r<top[c]; r++){
+                bit2 = getBit(field[c],r);
+                col_transitions += (bit1 ^ bit2);
+                bit1 = bit2;
+            }
+		}
+		
+		for (int r=0; r<top_max; r++){
+			bit1 = getBit(field[0],r);
+            for (int c = 1; c<COLS; c++){
+                bit2 = getBit(field[c],r);
+                row_transitions += (bit1 ^ bit2);
+                bit1 = bit2;
+            }
+		}
+
+		for (int i = 0; i < 10; i+=2) {
+			top_parity += (top[i] & 1) - (top[i+1] & 1);
 		}
 
 		return  - weightAggregateHeight * aggregate_height
 				+ weightCompleteLines * complete_lines
 				- weightHoles * holes
-				- weightBumpiness * bumpiness
 				- weightColTrans * col_transitions
 				- weightRowTrans * row_transitions
-				- weightLandingHeight * landing_height;
+				- weightLandingHeight * landing_height
+                - weightTopParity * top_parity
+                + weightTopVariety * top_variety
+                - weightMiniMaxTop * mini_max_top
+                - weightSideBump * side_bump
+                - weightBumpiness * bumpiness;
 	}
 
 	public double getReward() {
@@ -163,10 +208,14 @@ public class BitBoardCol {
 	public static void setWeights(double[] weights) {
 		weightAggregateHeight = weights[0];
 		weightCompleteLines = weights[1];
-		weightBumpiness = weights[2];
-		weightHoles = weights[3];
-		weightColTrans = weights[4];
-		weightRowTrans = weights[5];
-		weightLandingHeight = weights[6];
+		weightHoles = weights[2];
+		weightColTrans = weights[3];
+		weightRowTrans = weights[4];
+		weightLandingHeight = weights[5];
+	    weightTopParity = weights[6];
+	    weightTopVariety = weights[7];
+	    weightMiniMaxTop = weights[8];
+	    weightSideBump= weights[9];
+	    //weightBumpiness = weights[10];
 	}
 }
