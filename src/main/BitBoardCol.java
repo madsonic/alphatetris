@@ -21,6 +21,7 @@ public class BitBoardCol {
     static double weightMiniMaxTop;
     static double weightSideBump;
 	static double weightBumpiness;
+	static double weightWell;
 
 	//heuristic parameters
 	int aggregate_height;
@@ -34,6 +35,7 @@ public class BitBoardCol {
 	int mini_max_top;
 	int side_bump;
 	int bumpiness;
+	int well;
 
 
 	/**
@@ -101,7 +103,7 @@ public class BitBoardCol {
 		for(int c = 1; c < P_WIDTH[nextPiece][orient]; c++) {
 			height = Math.max(height,top[slot+c]- P_BOTTOM[nextPiece][orient][c]);
 		}
-		landing_height = height;
+		landing_height = height + P_HEIGHT[nextPiece][orient]/2;
 		//check if game ended
 		if(height+ P_HEIGHT[nextPiece][orient] > ROWS) {
 			for (int c=0;c<COLS;c++){
@@ -167,21 +169,38 @@ public class BitBoardCol {
 		for (int c=0; c<COLS; c++){
 			aggregate_height+=top[c];
 			holes += top[c] - Integer.bitCount(field[c]);
-			bit1 = 1;
+			bit1 = getBit(field[c],0);
             for (int r=1; r<top[c]; r++){
                 bit2 = getBit(field[c],r);
                 col_transitions += (bit1 ^ bit2);
                 bit1 = bit2;
             }
 		}
-		
+
+		for (int c= 1; c<COLS-1; c++) {
+			bit1 = (field[c-1] & (~field[c]) & field[c+1]) >> top[c];
+			bit1=Integer.bitCount(bit1);
+			well += ((1+bit1)*bit1)/2; //AP sum
+		}
+		//well values for the side columns
+		bit1 = ((~field[0]) & field[1]) >> top[0];
+		bit2 = ((~field[COLS-1]) & field[COLS-2]) >> top[COLS-1];
+
+		bit1 = Integer.bitCount(bit1);
+		bit2 = Integer.bitCount(bit2);
+
+		well += ( (1+bit1)*bit1 + (1+bit2)*bit2 )/2;
+
+		//calculate row_transitions
 		for (int r=0; r<top_max; r++){
-			bit1 = getBit(field[0],r);
-            for (int c = 1; c<COLS; c++){
+			bit1 = 1;
+            for (int c = 0; c<COLS; c++){
                 bit2 = getBit(field[c],r);
                 row_transitions += (bit1 ^ bit2);
                 bit1 = bit2;
             }
+            //for the last column
+            row_transitions += (bit1 ^ 1);
 		}
 
 		for (int i = 0; i < 10; i+=2) {
@@ -198,6 +217,7 @@ public class BitBoardCol {
                 + weightTopVariety * top_variety
                 - weightMiniMaxTop * mini_max_top
                 - weightSideBump * side_bump
+                - weightWell * well
                 - weightBumpiness * bumpiness;
 	}
 
@@ -216,6 +236,8 @@ public class BitBoardCol {
 	    weightTopVariety = weights[7];
 	    weightMiniMaxTop = weights[8];
 	    weightSideBump= weights[9];
-	    //weightBumpiness = weights[10];
+	    weightWell= weights[10];
+	    //weightBumpiness = weights[11];
+	    
 	}
 }
