@@ -20,17 +20,18 @@ public class PlayerTwo {
 		PieceNode.setChildNum(2);
 		BitBoardCol.setWeights(new double[] {
 
-				13.8346672058105469, // aggr. height
-				4.8310699462890625, // complete lines
-				22.56073760986328,   // holes
-				40.801902770996094,  // col transitions
-				46.64051818847656,   // row transitions
-				18.464271545410156,  // landing height
-				7.776729583740234,   // top parity
-				32.24385070800781,   // top variety
-				17.081558227539062,  // mini max top
-				2.219821929931641,   // side bump	
-				0.000000000000000,   // bumpiness
+				0,  // aggr. height
+				3.4181268101392694, // complete lines
+				7.899265427351652,  // holes
+				9.348695305445199,  // col transitions
+				3.2178882868487753, // row transitions
+				4.500158825082766,  // landing height
+				0,  // top parity
+				0,  // top variety
+				0,  // mini max top
+				0,  // side bump
+				3.3855972247263626,  // well
+				0  // bumpiness
 
 		});
 
