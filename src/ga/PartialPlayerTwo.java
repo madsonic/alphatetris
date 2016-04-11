@@ -5,6 +5,7 @@ import main.BoardNode;
 import main.PieceNode;
 import main.State;
 import main.TFrame;
+import sun.management.counter.Variability;
 
 // exactly the same as Player Two but with option of early termination after x moves.
 
@@ -89,12 +90,11 @@ public class PartialPlayerTwo {
         // root.rootExpand();
         // root.rootExpand();
         root.rootExpandAndUpdate();
-
+        
         while (!s.hasLost()) {
-            
              if (s.getTurnNumber()%2000 == 500) {
-	              System.out.println("Turn num: "+ s.getTurnNumber() +"   Lines cleared: " + s.getRowsCleared()); 
-              }
+	              printScore(s); 
+             }
             // update ExpectiMiniMax values
             // root.rootUpdate();
             s.makeMove(root.getBestMove());
@@ -107,10 +107,56 @@ public class PartialPlayerTwo {
             // root.rootExpand();
             root.rootExpandAndUpdate();
         }
+        
         System.out.println("I'm dead");
+        printScore(s);
         s.draw();
         return s.getRowsCleared();
-
+    }
+    
+    // similar to play game but allows to play multiple rounds and print instead return score
+    public void playGames(double[] weights, int rounds) {
+    	for (int i = 0; i < rounds; i++) {
+	    	State s = new State();
+	        new TFrame(s);
+	
+	        // Set static weights and childNum
+	        BitBoardCol.setWeights(weights);
+	        PieceNode.setChildNum(2);
+	
+	        // initialize root node's parent bn
+	        // BitBoardCol.initPieceBits();
+	        BitBoardCol bb = new BitBoardCol(new int[10], new int[10]);
+	        BoardNode bn = new BoardNode(bb);
+	
+	        // initialize root
+	        // root always points to a PieceNode
+	        PieceNode root = new PieceNode(bn, s.nextPiece);
+	
+	        // Initialize depth
+	        // every call to rootExpand expands the tree by 1 layer
+	        // uncomment to increase depth
+	        // last call must be rootExpandAndUpdate
+	
+	        root.rootExpand();
+	        // root.rootExpand();
+	        // root.rootExpand();
+	        // root.rootExpand();
+	        root.rootExpandAndUpdate();
+        
+            while (!s.hasLost()) {
+               // update ExpectiMiniMax values
+               // root.rootUpdate();
+               s.makeMove(root.getBestMove());
+                           
+               root = root.setRootToBest(s.nextPiece);
+               // root.rootExpand();
+               root.rootExpandAndUpdate();
+           }
+           System.out.println("Round: " + i);
+           printScore(s);
+           s.draw();
+		}
     }
     
     public static void main(String[] args) {
@@ -126,6 +172,9 @@ public class PartialPlayerTwo {
     	                    4.220457292054116,
     	                    0.3770283420907572,
     	                    1.5238002012538043};
-    	p.playGame(weights);
+    	p.playGames(weights, 5);
+    }
+    public static void printScore(State s) {
+    	System.out.println("Turn num: "+ s.getTurnNumber() +"   Lines cleared: " + s.getRowsCleared());
     }
 }
