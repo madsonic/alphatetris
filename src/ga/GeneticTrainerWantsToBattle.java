@@ -10,7 +10,7 @@ import org.jgap.impl.DoubleGene;
 
 public class GeneticTrainerWantsToBattle {
     private static final int POPULATION_SIZE = 1000;
-    private static final int NUM_HEURISTICS = 7;
+    private static final int NUM_HEURISTICS = 10;
     // can set this to negative but so far the best always gives positive values so might as well constrain
     private static final double WEIGHT_VALUE_MIN = 0;
     private static final double WEIGHT_VALUE_MAX = 10;

@@ -7,7 +7,7 @@ import org.jgap.IChromosome;
 
 @SuppressWarnings("serial")
 public class TetrisFitnessFunction extends FitnessFunction{
-    private static final int NUM_HEURISTICS = 7;
+    private static final int NUM_HEURISTICS = 10;
     
     PartialPlayerTwo player = new PartialPlayerTwo();
     PlayerTwo realPlayer = new PlayerTwo();
