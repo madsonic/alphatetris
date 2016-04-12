@@ -7,7 +7,7 @@ import org.jgap.IChromosome;
 
 @SuppressWarnings("serial")
 public class TetrisFitnessFunction extends FitnessFunction{
-    private static final int NUM_HEURISTICS = 10;
+    private static final int NUM_HEURISTICS = 11;
     
     PartialPlayerTwo player = new PartialPlayerTwo();
     PlayerTwo realPlayer = new PlayerTwo();
@@ -30,8 +30,8 @@ public class TetrisFitnessFunction extends FitnessFunction{
         for (int i = 0; i < NUM_HEURISTICS; i++) {
             System.out.println(getGeneAtIndex(weights, i));
         }
-        System.out.println("Number of Rows Cleared: ");
-        System.out.println(player.playGame(convertChromosomeWeights(weights)));
+//        System.out.println("Number of Rows Cleared: ");
+//        System.out.println(player.playGame(convertChromosomeWeights(weights)));
     }
     
     @Override

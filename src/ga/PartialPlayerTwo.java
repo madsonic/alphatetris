@@ -92,16 +92,16 @@ public class PartialPlayerTwo {
         root.rootExpandAndUpdate();
         
         while (!s.hasLost()) {
-             if (s.getTurnNumber()%2000 == 500) {
-	              printScore(s); 
-             }
+//             if (s.getTurnNumber()%2000 == 500) {
+//	              printScore(s); 
+//             }
             // update ExpectiMiniMax values
             // root.rootUpdate();
             s.makeMove(root.getBestMove());
             
             // turn by turn graphics
-//            s.draw();
-//            s.drawNext(0,0);
+            s.draw();
+            s.drawNext(0,0);
             
             root = root.setRootToBest(s.nextPiece);
             // root.rootExpand();
@@ -110,7 +110,7 @@ public class PartialPlayerTwo {
         
         System.out.println("I'm dead");
         printScore(s);
-        s.draw();
+//        s.draw();
         return s.getRowsCleared();
     }
     
@@ -118,7 +118,6 @@ public class PartialPlayerTwo {
     public void playGames(double[] weights, int rounds) {
     	for (int i = 0; i < rounds; i++) {
 	    	State s = new State();
-	        new TFrame(s);
 	
 	        // Set static weights and childNum
 	        BitBoardCol.setWeights(weights);
@@ -147,8 +146,11 @@ public class PartialPlayerTwo {
             while (!s.hasLost()) {
                // update ExpectiMiniMax values
                // root.rootUpdate();
+            	if (s.getTurnNumber() % 100000 == 0) {
+            		printScore(s);
+            	}
                s.makeMove(root.getBestMove());
-                           
+               
                root = root.setRootToBest(s.nextPiece);
                // root.rootExpand();
                root.rootExpandAndUpdate();
@@ -162,16 +164,19 @@ public class PartialPlayerTwo {
     public static void main(String[] args) {
     	// play game
     	PartialPlayerTwo p = new PartialPlayerTwo();
-    	double[] weights = {1.550894525201647,
-    	                    3.6393568332418647,
-    	                    9.793561450312492,
-    	                    8.146038155910917,
-    	                    5.711970387950983,
-    	                    2.1999248114171865,
-    	                    0.9223982639211392,
-    	                    4.220457292054116,
-    	                    0.3770283420907572,
-    	                    1.5238002012538043};
+    	
+    	// best weights so far
+    	double[] weights = {1.4101417483877365,
+					    	1.7211254382260732,
+					    	9.430143863717376,
+					    	9.994060706564685,
+					    	2.151838313833677,
+					    	0.44094887506903957,
+					    	0.1085005610847889,
+					    	2.575604041318804,
+					    	0.782307878163081,
+					    	0.2962660424028918,
+					    	2.8036583031140183};
     	p.playGames(weights, 5);
     }
     public static void printScore(State s) {
