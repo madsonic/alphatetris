@@ -1,0 +1,10 @@
+Round: 0
+Turn num: 85060543   Lines cleared: 34024200
+Round: 1
+Turn num: 57102884   Lines cleared: 22841136
+Round: 2
+Turn num: 77247594   Lines cleared: 30899020
+Round: 3
+Turn num: 9682564   Lines cleared: 3873008
+Round: 4
+Turn num: 13302616   Lines cleared: 5321029
