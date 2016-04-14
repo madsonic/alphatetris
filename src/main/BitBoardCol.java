@@ -207,18 +207,18 @@ public class BitBoardCol {
 			top_parity += (top[i] & 1) - (top[i+1] & 1);
 		}
 
-		return  - weightAggregateHeight * aggregate_height
+		return weightAggregateHeight * aggregate_height
 				+ weightCompleteLines * complete_lines
-				- weightHoles * holes
-				- weightColTrans * col_transitions
-				- weightRowTrans * row_transitions
-				- weightLandingHeight * landing_height
-                - weightTopParity * top_parity
-                + weightTopVariety * top_variety
-                - weightMiniMaxTop * mini_max_top
-                - weightSideBump * side_bump
-                - weightWell * well
-                - weightBumpiness * bumpiness;
+				+ weightHoles * holes
+				+ weightColTrans * col_transitions
+				+ weightRowTrans * row_transitions
+				+ weightLandingHeight * landing_height
+				+ weightTopParity * top_parity
+				+ weightTopVariety * top_variety
+				+ weightMiniMaxTop * mini_max_top
+				+ weightSideBump * side_bump
+				+ weightWell * well
+				+ weightBumpiness * bumpiness;
 	}
 
 	public double getReward() {

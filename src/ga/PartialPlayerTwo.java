@@ -118,6 +118,7 @@ public class PartialPlayerTwo {
     public void playGames(double[] weights, int rounds) {
     	for (int i = 0; i < rounds; i++) {
 	    	State s = new State();
+//        new TFrame(s);
 	
 	        // Set static weights and childNum
 	        BitBoardCol.setWeights(weights);
@@ -138,7 +139,7 @@ public class PartialPlayerTwo {
 	        // last call must be rootExpandAndUpdate
 	
 	        root.rootExpand();
-	        // root.rootExpand();
+//	        root.rootExpand();
 	        // root.rootExpand();
 	        // root.rootExpand();
 	        root.rootExpandAndUpdate();
@@ -146,14 +147,15 @@ public class PartialPlayerTwo {
             while (!s.hasLost()) {
                // update ExpectiMiniMax values
                // root.rootUpdate();
-            	if (s.getTurnNumber() % 100000 == 0) {
+            	if (s.getTurnNumber() % 10000 == 0) {
             		printScore(s);
             	}
                s.makeMove(root.getBestMove());
                
                root = root.setRootToBest(s.nextPiece);
-               // root.rootExpand();
+//                root.rootExpand();
                root.rootExpandAndUpdate();
+//              s.draw();
            }
            System.out.println("Round: " + i);
            printScore(s);
@@ -166,18 +168,20 @@ public class PartialPlayerTwo {
     	PartialPlayerTwo p = new PartialPlayerTwo();
     	
     	// best weights so far
-    	double[] weights = {1.4101417483877365,
-					    	1.7211254382260732,
-					    	9.430143863717376,
-					    	9.994060706564685,
-					    	2.151838313833677,
-					    	0.44094887506903957,
-					    	0.1085005610847889,
-					    	2.575604041318804,
-					    	0.782307878163081,
-					    	0.2962660424028918,
-					    	2.8036583031140183};
-    	p.playGames(weights, 5);
+    	double[] weights = {
+          -1.4101417483877365,
+          1.7211254382260732,
+          -9.430143863717376,
+          -9.994060706564685,
+          -2.151838313833677,
+          -0.44094887506903957,
+          -0.1085005610847889,
+          2.575604041318804,
+          -0.782307878163081,
+          -0.2962660424028918,
+          -2.8036583031140183
+      };
+    	p.playGames(weights, 1);
     }
     public static void printScore(State s) {
     	System.out.println("Turn num: "+ s.getTurnNumber() +"   Lines cleared: " + s.getRowsCleared());

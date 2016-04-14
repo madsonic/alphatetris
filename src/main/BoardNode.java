@@ -18,7 +18,8 @@ public class BoardNode implements Comparable<BoardNode>{
 		score = bb.makeMove(move[0], move[1], parent.pieceIndex);
 		generatePieceNodes();
 	}
-	
+
+	// only used for first empty BB at start; all future bbs spawn from this one
 	public BoardNode(BitBoardCol bb) {
 		parent = null;
 		move  = null;
