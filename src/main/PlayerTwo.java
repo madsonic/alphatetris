@@ -3,6 +3,20 @@ import java.util.Arrays;
 
 public class PlayerTwo {
 
+	public static final double[] WEIGHTS = {
+			-1.4101417483877365,
+			1.7211254382260732,
+			-9.430143863717376,
+			-9.994060706564685,
+			-2.151838313833677,
+			-0.44094887506903957,
+			-0.1085005610847889,
+			2.575604041318804,
+			-0.782307878163081,
+			-0.2962660424028918,
+			-2.8036583031140183
+	};
+
 	public static void print_field(State s) {
 		int[][] field = s.getField();
 		for (int i=19;i>=0;i--){
@@ -18,26 +32,10 @@ public class PlayerTwo {
 
 		//Set static weights and childNum
 		PieceNode.setChildNum(2);
-		BitBoardCol.setWeights(new double[] {
-
-				0,  // aggr. height
-				3.4181268101392694, // complete lines
-				7.899265427351652,  // holes
-				9.348695305445199,  // col transitions
-				3.2178882868487753, // row transitions
-				4.500158825082766,  // landing height
-				0,  // top parity
-				0,  // top variety
-				0,  // mini max top
-				0,  // side bump
-				3.3855972247263626,  // well
-				0  // bumpiness
-
-		});
 
 		//initialize root node's parent bn
 		//BitBoardCol.initPieceBits();
-		BitBoardCol bb = new BitBoardCol(new int[10], new int[10] );
+		BitBoardCol bb = new BitBoardCol(new int[10], new int[10], WEIGHTS);
 
 		BoardNode bn = new BoardNode(bb);
 

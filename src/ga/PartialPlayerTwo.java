@@ -19,12 +19,11 @@ public class PartialPlayerTwo {
         int total_reward = 0;
 
         // Set static weights and childNum
-        BitBoardCol.setWeights(weights);
         PieceNode.setChildNum(2);
 
         // initialize root node's parent bn
         // BitBoardCol.initPieceBits();
-        BitBoardCol bb = new BitBoardCol(new int[10], new int[10]);
+        BitBoardCol bb = new BitBoardCol(new int[10], new int[10], weights);
         BoardNode bn = new BoardNode(bb);
 
         // initialize root
@@ -68,12 +67,11 @@ public class PartialPlayerTwo {
         new TFrame(s);
 
         // Set static weights and childNum
-        BitBoardCol.setWeights(weights);
         PieceNode.setChildNum(2);
 
         // initialize root node's parent bn
         // BitBoardCol.initPieceBits();
-        BitBoardCol bb = new BitBoardCol(new int[10], new int[10]);
+        BitBoardCol bb = new BitBoardCol(new int[10], new int[10], weights);
         BoardNode bn = new BoardNode(bb);
 
         // initialize root
@@ -121,12 +119,11 @@ public class PartialPlayerTwo {
 //        new TFrame(s);
 	
 	        // Set static weights and childNum
-	        BitBoardCol.setWeights(weights);
 	        PieceNode.setChildNum(2);
 	
 	        // initialize root node's parent bn
 	        // BitBoardCol.initPieceBits();
-	        BitBoardCol bb = new BitBoardCol(new int[10], new int[10]);
+	        BitBoardCol bb = new BitBoardCol(new int[10], new int[10], weights);
 	        BoardNode bn = new BoardNode(bb);
 	
 	        // initialize root

@@ -1,27 +1,31 @@
 package main;
+
 //Each column is represented as a 32bit integer.
 public class BitBoardCol {
 
 	final static int COLS = 10;
-	static int ROWS = 20;
+	final static int ROWS = 20;
 
 	//Board representation
-	int[] field;
-	int[] top;
+	private int[] field;
+	private int[] top;
 
 	//heuristic weights
-	static double weightAggregateHeight;
-	static double weightCompleteLines;
-	static double weightHoles;
-	static double weightColTrans;
-	static double weightRowTrans;
-	static double weightLandingHeight;
-    static double weightTopParity;
-    static double weightTopVariety;
-    static double weightMiniMaxTop;
-    static double weightSideBump;
-	static double weightBumpiness;
-	static double weightWell;
+	private double[] weights;
+	// weight array indices
+	public static final int 
+			INDEX_AGGREGATE_HEIGHT = 0,
+			INDEX_COMPLETED_LINES = 1,
+			INDEX_HOLES = 2,
+			INDEX_COL_TRANS = 3,
+			INDEX_ROW_TRANS = 4,
+			INDEX_LANDING_HEIGHT = 5,
+			INDEX_TOP_PARITY = 6,
+			INDEX_TOP_VARIETY = 7,
+			INDEX_MINIMAX_TOP = 8,
+			INDEX_SIDE_BUMPINESS = 9,
+			INDEX_WELLS = 10;
+	//  int INDEX_BUMPINESS = 11;
 
 	//heuristic parameters
 	int aggregate_height;
@@ -75,24 +79,22 @@ public class BitBoardCol {
 		}
 	}
 
-	static void setRows(int rowNum) {
-		ROWS = rowNum;
-	}
-
 	static int getBit( int bitCol, int rowIndex) {
 		return (bitCol >> rowIndex) & 1;
 	}
 
 	//Constructor
-	public BitBoardCol( int[] field, int[] top) {
+	public BitBoardCol(int[] field, int[] top, double[] weights) {
 		this.field = field.clone();
 		this.top = top.clone();
+		setWeights(weights);
 	}
 
 	//Constructor
 	public BitBoardCol(BitBoardCol bb) {
 		this.field = bb.field.clone();
 		this.top = bb.top.clone();
+		this.weights = bb.weights;
 	}
 
 	public double makeMove(int orient, int slot, int nextPiece) {
@@ -207,37 +209,27 @@ public class BitBoardCol {
 			top_parity += (top[i] & 1) - (top[i+1] & 1);
 		}
 
-		return weightAggregateHeight * aggregate_height
-				+ weightCompleteLines * complete_lines
-				+ weightHoles * holes
-				+ weightColTrans * col_transitions
-				+ weightRowTrans * row_transitions
-				+ weightLandingHeight * landing_height
-				+ weightTopParity * top_parity
-				+ weightTopVariety * top_variety
-				+ weightMiniMaxTop * mini_max_top
-				+ weightSideBump * side_bump
-				+ weightWell * well
-				+ weightBumpiness * bumpiness;
+		return weights[INDEX_AGGREGATE_HEIGHT] * aggregate_height
+				+ weights[INDEX_COMPLETED_LINES] * complete_lines
+				+ weights[INDEX_HOLES] * holes
+				+ weights[INDEX_COL_TRANS] * col_transitions
+				+ weights[INDEX_ROW_TRANS] * row_transitions
+				+ weights[INDEX_LANDING_HEIGHT] * landing_height
+				+ weights[INDEX_TOP_PARITY] * top_parity
+				+ weights[INDEX_TOP_VARIETY] * top_variety
+				+ weights[INDEX_MINIMAX_TOP] * mini_max_top
+				+ weights[INDEX_SIDE_BUMPINESS] * side_bump
+				+ weights[INDEX_WELLS] * well;
+				//+ weights[INDEX_BUMPINESS] * bumpiness;
 	}
 
 	public double getReward() {
 		return ROWS*COLS - aggregate_height;
 	}
 
-	public static void setWeights(double[] weights) {
-		weightAggregateHeight = weights[0];
-		weightCompleteLines = weights[1];
-		weightHoles = weights[2];
-		weightColTrans = weights[3];
-		weightRowTrans = weights[4];
-		weightLandingHeight = weights[5];
-	    weightTopParity = weights[6];
-	    weightTopVariety = weights[7];
-	    weightMiniMaxTop = weights[8];
-	    weightSideBump= weights[9];
-	    weightWell= weights[10];
-	    //weightBumpiness = weights[11];
-	    
-	}
+	public void setWeights(double[] weights) { this.weights = weights; }
+
+	public int[] getFieldCopy() { return field.clone(); }
+	public int[] getTopCopy() { return top.clone(); }
+	public double[] getWeights() { return weights; }
 }
