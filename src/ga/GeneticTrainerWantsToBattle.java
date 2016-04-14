@@ -9,14 +9,15 @@ import org.jgap.impl.DefaultConfiguration;
 import org.jgap.impl.DoubleGene;
 
 public class GeneticTrainerWantsToBattle {
-    private static final int POPULATION_SIZE = 1000;
+    private static final int POPULATION_SIZE = 500;
     private static final int NUM_HEURISTICS = 11;
     // can set this to negative but so far the best always gives positive values so might as well constrain
     private static final double WEIGHT_VALUE_MIN = 0;
     private static final double WEIGHT_VALUE_MAX = 10;
-    private static final int MAX_ALLOWED_EVOLUTIONS = 20;
-
+    private static final int MAX_ALLOWED_EVOLUTIONS = 5;
+    
     public static void main(String[] args) throws Exception {
+        StopWatch sw = new StopWatch();
         Configuration conf = new DefaultConfiguration();
 
         // seed with sample chromosome
@@ -35,16 +36,21 @@ public class GeneticTrainerWantsToBattle {
 
         // randomly initialize population
         Genotype population = Genotype.randomInitialGenotype(conf);
-
+        
         // actual training begins here
         for (int i = 0; i < MAX_ALLOWED_EVOLUTIONS; i++) {
+            sw.start();
             population.evolve();
+            sw.stop();
+            
             System.out.println("Evolution: " + i);
+            System.out.println("Cumulative time taken in seconds: " + sw.getTime());
         }
 
         IChromosome bestSolution = population.getFittestChromosome();
 
         fitness.printHeuristics(bestSolution);
+        
 
     }
 }
