@@ -1,0 +1,2 @@
+1 look ahead 4 child
+Turn num: 168281693   Lines cleared: 67312661

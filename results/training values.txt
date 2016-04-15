@@ -1,0 +1,29 @@
+Training 1, GA
+population = 1000, evolution = 20, 1 look ahead by agent during tournament
+Final Heuristic Values:
+AggregateHeight 1.4101417483877365
+CompleteLines 1.7211254382260732
+Holes 9.430143863717376
+ColTrans 9.994060706564685
+RowTrans 2.151838313833677
+LandingHeight 0.44094887506903957
+TopParity 0.1085005610847889
+TopVariety 2.575604041318804
+MiniMaxTop 0.782307878163081
+SideBump 0.2962660424028918
+Well 2.8036583031140183
+
+Training 2, GA
+population = 100, evolution = 10, 2 look ahead by agent during tournament
+Final Heuristic Values:
+AggregateHeight 3.108665787598337
+CompleteLines 8.29666183509163
+Holes 8.696244414767394
+ColTrans 9.229351207520212
+RowTrans 2.1281654349330736
+LandingHeight 0.7271085924872489
+TopParity 1.512670469520433
+TopVariety 2.052394610606365
+MiniMaxTop 0.017072763669196966
+SideBump 1.9539186429963762
+Well 1.3887981532335458
