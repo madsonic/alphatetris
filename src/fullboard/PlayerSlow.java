@@ -1,7 +1,8 @@
-package main;
-import java.util.Arrays;
+package fullboard;
 
-public class PlayerTwo {
+import main.State;
+
+public class PlayerSlow {
 
 	public static final double[] WEIGHTS = {
 			-1.4101417483877365,
@@ -16,14 +17,6 @@ public class PlayerTwo {
 			-0.2962660424028918,
 			-2.8036583031140183
 	};
-
-	public static void print_field(State s) {
-		int[][] field = s.getField();
-		for (int i=19;i>=0;i--){
-			System.out.println(Arrays.toString(field[i]));
-		}
-		System.out.println("");
-	}
 	
 	public static void main(String[] args) {
 		State s = new State();
@@ -31,17 +24,17 @@ public class PlayerTwo {
 		int total_reward = 0;
 
 		//Set static weights and childNum
-		PieceNode.setChildNum(4);
+		PieceNodeSlow.setChildNum(4);
 
 		//initialize root node's parent bn
 		//BitBoardCol.initPieceBits();
-		BitBoardCol bb = new BitBoardCol(new int[10], new int[10], WEIGHTS);
+		BitBoardFullArray bb = new BitBoardFullArray();
 
-		BoardNode bn = new BoardNode(bb);
+		BoardNodeSlow bn = new BoardNodeSlow(bb);
 
 		//initialize root
 		//root always points to a PieceNode
-		PieceNode root = new PieceNode(bn, s.nextPiece);
+		PieceNodeSlow root = new PieceNodeSlow(bn, s.nextPiece);
 
 		//Initialize depth
 		//every call to rootExpand expands the tree by 1 layer
