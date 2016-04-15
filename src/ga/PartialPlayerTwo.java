@@ -1,10 +1,6 @@
 package ga;
 
-import main.BitBoardCol;
-import main.BoardNode;
-import main.PieceNode;
-import main.State;
-import main.TFrame;
+import main.*;
 import sun.management.counter.Variability;
 
 // exactly the same as Player Two but with option of early termination after x moves.
@@ -119,7 +115,7 @@ public class PartialPlayerTwo {
 //        new TFrame(s);
 	
 	        // Set static weights and childNum
-	        PieceNode.setChildNum(3);
+	        PieceNode.setChildNum(2);
 	
 	        // initialize root node's parent bn
 	        // BitBoardCol.initPieceBits();
@@ -140,13 +136,18 @@ public class PartialPlayerTwo {
 	        // root.rootExpand();
 	        // root.rootExpand();
 	        root.rootExpandAndUpdate();
-        
+            long t = System.nanoTime();
             while (!s.hasLost()) {
                // update ExpectiMiniMax values
                // root.rootUpdate();
-            	if (s.getTurnNumber() % 10000 == 0) {
-            		printScore(s);
-            	}
+              if (s.getTurnNumber() % 10000 == 0) {
+                System.out.println(
+                    "Turn num: "+ s.getTurnNumber()
+                        + "   Lines cleared: " + s.getRowsCleared()
+                        + "   Turns per second: " + BeamSearchAgent.turnsPerSecond(10000, System.nanoTime()-t)
+                );
+                t = System.nanoTime();
+              }
                s.makeMove(root.getBestMove());
                
                root = root.setRootToBest(s.nextPiece);

@@ -1,5 +1,10 @@
 package main;
 
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
+
 /**
  * Controls the search tree (piecenodes and boardnodes)
  * Implements search logic.
@@ -10,14 +15,29 @@ public class AlphaTetris implements BeamSearchAgent {
   private int maxDepth;
   private int beamWidth;
 
+  private final ExecutorService EXECUTOR;
+
   private MoveNode root;
 
-  public AlphaTetris(int beamWidth, int maxDepth, double[] weights) {
+  public AlphaTetris(int beamWidth, int maxDepth, double[] weights, boolean concurrent) {
     if (beamWidth <= 0 || maxDepth < 0 || weights == null) throw new IllegalArgumentException();
     this.beamWidth = beamWidth;
     this.weights = weights;
     this.maxDepth = maxDepth;
     this.root = MoveNode.makeFirstNode(weights);
+
+    if (concurrent) {
+      int pcs = Runtime.getRuntime().availableProcessors();
+      EXECUTOR = new ThreadPoolExecutor(
+          pcs, pcs,
+          10, TimeUnit.SECONDS,
+          new ArrayBlockingQueue<Runnable>(pcs * 24, false),
+          new ThreadPoolExecutor.CallerRunsPolicy()
+      );
+      ((ThreadPoolExecutor)EXECUTOR).allowCoreThreadTimeOut(true);
+    } else {
+      EXECUTOR = null;
+    }
   }
 
   /////////////////////////////////////////////
@@ -44,7 +64,7 @@ public class AlphaTetris implements BeamSearchAgent {
   @Override
   public int[] pickNextMove(int givenShape) {
     ShapeNode currentShape = root.getNextShapeNode(givenShape);
-    root = currentShape.getBestMove(maxDepth, beamWidth);
+    root = currentShape.getBestMove(maxDepth, beamWidth, EXECUTOR);
     return root.MOVE;
   }
 

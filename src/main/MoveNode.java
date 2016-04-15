@@ -1,5 +1,7 @@
 package main;
 
+import java.util.concurrent.ExecutorService;
+
 class MoveNode implements Comparable<MoveNode> {
 
   final BitBoardCol MODEL;
@@ -32,18 +34,26 @@ class MoveNode implements Comparable<MoveNode> {
   }
 
   // updates expected value and returns self
-  MoveNode updateExpectedValue(int remainingDepth, int beamWidth) {
+  MoveNode updateExpectedValue(int remainingDepth, int beamWidth, ExecutorService executor) {
     if (remainingDepth == 0) {
       return this;
     }
 
-    //TODO parallel
-    expectedValue = 0;
-    remainingDepth--;
-    for (ShapeNode possibleShape : SHAPE_CHILDREN) {
-      expectedValue += possibleShape.getBestMove(remainingDepth, beamWidth).expectedValue;
+    // SINGLE THREADED
+    if (executor == null) {
+      expectedValue = 0;
+      remainingDepth--;
+      for (ShapeNode possibleShape : SHAPE_CHILDREN) {
+        expectedValue += possibleShape.getBestMove(remainingDepth, beamWidth, executor).expectedValue;
+      }
+      expectedValue /= State.N_PIECES;
     }
-    expectedValue /= State.N_PIECES;
+
+    // MULTI THREADED
+    else {
+
+    }
+
     return this;
   }
 

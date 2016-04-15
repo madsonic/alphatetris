@@ -4,8 +4,8 @@ import ga.PartialPlayerTwo;
 
 public interface BeamSearchAgent {
 
-  static BeamSearchAgent makeDefaultAgent(int beamWidth, int maxDepth, double[] weights) {
-    return new AlphaTetris(beamWidth, maxDepth, weights);
+  static BeamSearchAgent makeDefaultAgent(int beamWidth, int maxDepth, double[] weights, boolean concurrent) {
+    return new AlphaTetris(beamWidth, maxDepth, weights, concurrent);
   }
 
   // sets beam search width (CHILDNUM)
@@ -23,7 +23,7 @@ public interface BeamSearchAgent {
 
   static void main(String[] args) {
     // best weights so far
-    double[] weights = {
+    final double[] WEIGHTS = {
         -1.4101417483877365,
         1.7211254382260732,
         -9.430143863717376,
@@ -36,17 +36,32 @@ public interface BeamSearchAgent {
         -0.2962660424028918,
         -2.8036583031140183
     };
-    BeamSearchAgent agent = makeDefaultAgent(3, 1, weights);
+
+    final int BEAM_WIDTH = 2;
+    final int LOOKAHEAD_DEPTH = 1;
+    final boolean MULTITHREAD = false;
+
+    BeamSearchAgent agent = makeDefaultAgent(BEAM_WIDTH, LOOKAHEAD_DEPTH, WEIGHTS, MULTITHREAD);
     State s = new State();
 //    new TFrame(s);
+    long t = System.nanoTime();
     while (!s.hasLost()) {
       if (s.getTurnNumber() % 10000 == 0) {
-        PartialPlayerTwo.printScore(s);
+        System.out.println(
+            "Turn num: "+ s.getTurnNumber()
+            + "   Lines cleared: " + s.getRowsCleared()
+            + "   Turns per second: " + turnsPerSecond(10000, System.nanoTime()-t)
+        );
+        t = System.nanoTime();
       }
       s.makeMove(agent.pickNextMove(s.getNextPiece()));
 //      s.draw();
 //      s.drawNext(4, 0);
     }
     System.out.println("You have completed "+s.getRowsCleared()+" rows.");
+  }
+
+  static String turnsPerSecond(int turns, long nanos) {
+    return "" + ((double)turns)*1000000000 / nanos;
   }
 }

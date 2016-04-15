@@ -1,7 +1,7 @@
 package main;
 
-import java.util.Comparator;
 import java.util.PriorityQueue;
+import java.util.concurrent.ExecutorService;
 
 class ShapeNode {
 
@@ -15,20 +15,27 @@ class ShapeNode {
     SHAPE = shape;
   }
 
-  MoveNode getBestMove(int remainingDepth, int beamWidth) {
-    if (moveChildren.length != beamWidth) { // not yet expanded or beam width changed
-      generateChildren(beamWidth);
-    }
-    for (MoveNode child : moveChildren) {
-      child.updateExpectedValue(remainingDepth, beamWidth);
-    }
-    MoveNode best = moveChildren[0];
-    for (MoveNode child : moveChildren) {
-      if (child.compareTo(best) > 0) {
-        best = child;
+  MoveNode getBestMove(int remainingDepth, int beamWidth, ExecutorService executor) {
+
+    // SINGLE THREADED
+    if (executor == null) {
+      if (moveChildren.length != beamWidth) { // not yet expanded or beam width changed
+        generateChildren(beamWidth);
       }
+      for (MoveNode child : moveChildren) {
+        child.updateExpectedValue(remainingDepth, beamWidth, executor);
+      }
+      MoveNode best = moveChildren[0];
+      for (MoveNode child : moveChildren) {
+        if (child.compareTo(best) > 0) {
+          best = child;
+        }
+      }
+      return best;
     }
-    return best;
+
+    // MULTI THREADED
+    return null;
   }
 
   // calculates immediate heuristic values of all possible next moves,
