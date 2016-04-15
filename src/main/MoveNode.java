@@ -4,9 +4,8 @@ class MoveNode implements Comparable<MoveNode> {
 
   final BitBoardCol MODEL;
   final int[] MOVE;
-  final ShapeNode[] CHILD_SHAPES = new ShapeNode[State.N_PIECES];
-
-  double value;
+  double expectedValue;
+  final ShapeNode[] SHAPE_CHILDREN = new ShapeNode[State.N_PIECES];
 
   static MoveNode makeFirstNode(double[] weights) {
     return new MoveNode(weights);
@@ -15,30 +14,46 @@ class MoveNode implements Comparable<MoveNode> {
   private MoveNode(double[] weights) {
     MODEL = new BitBoardCol(weights);
     MOVE = null;
-
     // generate child pieces
-    for (int i = 0; i< CHILD_SHAPES.length; i++) {
-      CHILD_SHAPES[i] = new ShapeNode(i, this.MODEL); // shapes dont alter models, can pass reference to own MODEL
+    for (int i = 0; i< SHAPE_CHILDREN.length; i++) {
+      SHAPE_CHILDREN[i] = new ShapeNode(i, this.MODEL); // shapes dont alter models, can pass reference to own MODEL
     }
   }
 
   MoveNode(int[] move, ShapeNode parent) {
     MOVE = move;
     MODEL = new BitBoardCol(parent.MODEL); // clone source MODEL
-    value = MODEL.makeMove(move[State.ORIENT], move[State.SLOT], parent.SHAPE); // model updated
+    expectedValue = MODEL.makeMove(move[State.ORIENT], move[State.SLOT], parent.SHAPE); // model updated
 
     // generate child pieces
-    for (int i = 0; i< CHILD_SHAPES.length; i++) {
-      CHILD_SHAPES[i] = new ShapeNode(i, this.MODEL); // shapes dont alter models, can pass reference to own MODEL
+    for (int i = 0; i< SHAPE_CHILDREN.length; i++) {
+      SHAPE_CHILDREN[i] = new ShapeNode(i, this.MODEL); // shapes dont alter models, can pass reference to own MODEL
     }
   }
 
-  int expand(int remainingDepth) {
+  // updates expected value and returns self
+  MoveNode updateExpectedValue(int remainingDepth, int beamWidth) {
+    if (remainingDepth == 0) {
+      return this;
+    }
 
+    //TODO parallel
+    expectedValue = 0;
+    remainingDepth--;
+    for (ShapeNode possibleShape : SHAPE_CHILDREN) {
+      expectedValue += possibleShape.getBestMove(remainingDepth, beamWidth).expectedValue;
+    }
+    expectedValue /= State.N_PIECES;
+    return this;
   }
 
-  ShapeNode getNextShapeNode(int shape) { return CHILD_SHAPES[shape]; }
+  ShapeNode getNextShapeNode(int shape) { return SHAPE_CHILDREN[shape]; }
 
   @Override
-  public int compareTo(MoveNode x) { return value < x.value ? -1 : 1; }
+  public int compareTo(MoveNode x) {
+    return expectedValue < x.expectedValue ? -1
+        : expectedValue > x.expectedValue ? 1
+        : 0;
+  }
+
 }

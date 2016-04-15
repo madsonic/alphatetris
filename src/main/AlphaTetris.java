@@ -13,6 +13,7 @@ public class AlphaTetris implements BeamSearchAgent {
   private MoveNode root;
 
   public AlphaTetris(int beamWidth, int maxDepth, double[] weights) {
+    if (beamWidth <= 0 || maxDepth < 0 || weights == null) throw new IllegalArgumentException();
     this.beamWidth = beamWidth;
     this.weights = weights;
     this.maxDepth = maxDepth;
@@ -43,7 +44,7 @@ public class AlphaTetris implements BeamSearchAgent {
   @Override
   public int[] pickNextMove(int givenShape) {
     ShapeNode currentShape = root.getNextShapeNode(givenShape);
-    root = currentShape.getBestMove(maxDepth);
+    root = currentShape.getBestMove(maxDepth, beamWidth);
     return root.MOVE;
   }
 

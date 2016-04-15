@@ -116,10 +116,10 @@ public class PartialPlayerTwo {
     public void playGames(double[] weights, int rounds) {
     	for (int i = 0; i < rounds; i++) {
 	    	State s = new State();
-        new TFrame(s);
+//        new TFrame(s);
 	
 	        // Set static weights and childNum
-	        PieceNode.setChildNum(2);
+	        PieceNode.setChildNum(3);
 	
 	        // initialize root node's parent bn
 	        // BitBoardCol.initPieceBits();
@@ -152,7 +152,7 @@ public class PartialPlayerTwo {
                root = root.setRootToBest(s.nextPiece);
 //                root.rootExpand();
                root.rootExpandAndUpdate();
-              s.draw();
+//              s.draw();
 //              s.drawNext(4, 0);
            }
            System.out.println("Round: " + i);
