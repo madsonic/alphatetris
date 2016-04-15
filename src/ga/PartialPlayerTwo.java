@@ -37,25 +37,25 @@ public class PartialPlayerTwo {
 
         root.rootExpand();
         // root.rootExpand();
-        // root.rootExpand();
-        // root.rootExpand();
+//         root.rootExpand();
+//         root.rootExpand();
         root.rootExpandAndUpdate();
 
         while (!s.hasLost() && s.getTurnNumber() < MAX_MOVES) {
             /*
              * if (s.getTurnNumber()%1000 == 500) {
-             * System.out.println("Turn num: "+ s.getTurnNumber() +
-             * "   Avg reward: " + total_reward/s.getTurnNumber() +
-             * "   Lines cleared: " + s.getRowsCleared()); }
-             */
-            // update ExpectiMiniMax values
-            // root.rootUpdate();
-            s.makeMove(root.getBestMove());
+            * System.out.println("Turn num: "+ s.getTurnNumber() +
+                * "   Avg reward: " + total_reward/s.getTurnNumber() +
+            * "   Lines cleared: " + s.getRowsCleared()); }
+          */
+          // update ExpectiMiniMax values
+          // root.rootUpdate();
+          s.makeMove(root.getBestMove());
 
-            total_reward += root.bestNode.bb.getReward();
-            root = root.setRootToBest(s.nextPiece);
-            // root.rootExpand();
-            root.rootExpandAndUpdate();
+          total_reward += root.bestNode.bb.getReward();
+          root = root.setRootToBest(s.nextPiece);
+          // root.rootExpand();
+          root.rootExpandAndUpdate();
         }
         return total_reward;
 
@@ -116,7 +116,7 @@ public class PartialPlayerTwo {
     public void playGames(double[] weights, int rounds) {
     	for (int i = 0; i < rounds; i++) {
 	    	State s = new State();
-//        new TFrame(s);
+        new TFrame(s);
 	
 	        // Set static weights and childNum
 	        PieceNode.setChildNum(2);
@@ -152,7 +152,8 @@ public class PartialPlayerTwo {
                root = root.setRootToBest(s.nextPiece);
 //                root.rootExpand();
                root.rootExpandAndUpdate();
-//              s.draw();
+              s.draw();
+//              s.drawNext(4, 0);
            }
            System.out.println("Round: " + i);
            printScore(s);

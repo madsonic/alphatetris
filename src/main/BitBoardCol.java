@@ -90,6 +90,12 @@ public class BitBoardCol {
 		setWeights(weights);
 	}
 
+	public BitBoardCol(double[] weights) {
+		this.field = new int[COLS];
+		this.top = new int[COLS];
+		setWeights(weights);
+	}
+
 	//Constructor
 	public BitBoardCol(BitBoardCol bb) {
 		this.field = bb.field.clone();
