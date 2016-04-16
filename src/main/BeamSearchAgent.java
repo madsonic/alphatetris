@@ -37,7 +37,7 @@ public interface BeamSearchAgent {
         -2.8036583031140183
     };
 
-    final int BEAM_WIDTH = 3;
+    final int BEAM_WIDTH = 2;
     final int LOOKAHEAD_DEPTH = 1;
     final boolean MULTITHREAD = false;
 
