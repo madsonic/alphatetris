@@ -1,6 +1,6 @@
 package main;
 
-import ga.PartialPlayerTwo;
+import java.util.concurrent.ExecutionException;
 
 public interface BeamSearchAgent {
 
@@ -19,9 +19,9 @@ public interface BeamSearchAgent {
   double[] getWeights();
 
   // does not sync with State; agent follows its internal model.
-  int[] pickNextMove(int givenShape);
+  int[] pickNextMove(int givenShape) throws ExecutionException, InterruptedException;
 
-  static void main(String[] args) {
+  static void main(String[] args) throws ExecutionException, InterruptedException {
     // best weights so far
     final double[] WEIGHTS = {
         -1.4101417483877365,
@@ -37,7 +37,7 @@ public interface BeamSearchAgent {
         -2.8036583031140183
     };
 
-    final int BEAM_WIDTH = 2;
+    final int BEAM_WIDTH = 3;
     final int LOOKAHEAD_DEPTH = 1;
     final boolean MULTITHREAD = false;
 

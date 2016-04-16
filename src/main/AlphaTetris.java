@@ -1,9 +1,6 @@
 package main;
 
-import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 
 /**
  * Controls the search tree (piecenodes and boardnodes)
@@ -62,7 +59,7 @@ public class AlphaTetris implements BeamSearchAgent {
   /////////////////////////////////////////////
 
   @Override
-  public int[] pickNextMove(int givenShape) {
+  public int[] pickNextMove(int givenShape) throws ExecutionException, InterruptedException {
     ShapeNode currentShape = root.getNextShapeNode(givenShape);
     root = currentShape.getBestMove(maxDepth, beamWidth, EXECUTOR);
     return root.MOVE;

@@ -1,4 +1,5 @@
 package main;
+
 //Expected/min player
 //Given board, get expected score.
 public class BoardNode implements Comparable<BoardNode>{
@@ -27,7 +28,7 @@ public class BoardNode implements Comparable<BoardNode>{
 	}
 	
 	public void generatePieceNodes() {
-		for (int i=0; i<State.N_PIECES; i++) {
+		for (int i = 0; i< State.N_PIECES; i++) {
 			childPieces[i] = new PieceNode(this,i);
 		}
 	}

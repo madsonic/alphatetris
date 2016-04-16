@@ -1,6 +1,10 @@
 package main;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Future;
 
 class MoveNode implements Comparable<MoveNode> {
 
@@ -34,24 +38,32 @@ class MoveNode implements Comparable<MoveNode> {
   }
 
   // updates expected value and returns self
-  MoveNode updateExpectedValue(int remainingDepth, int beamWidth, ExecutorService executor) {
+  MoveNode updateExpectedValue(int remainingDepth, int beamWidth, ExecutorService executor) throws ExecutionException, InterruptedException {
     if (remainingDepth == 0) {
       return this;
     }
 
-    // SINGLE THREADED
+    expectedValue = 0;
+    final int updatedRemainingDepth = remainingDepth - 1;
+
+    // single threaded version
     if (executor == null) {
-      expectedValue = 0;
-      remainingDepth--;
       for (ShapeNode possibleShape : SHAPE_CHILDREN) {
-        expectedValue += possibleShape.getBestMove(remainingDepth, beamWidth, executor).expectedValue;
+        expectedValue += possibleShape.getBestMove(updatedRemainingDepth, beamWidth, executor).expectedValue;
       }
       expectedValue /= State.N_PIECES;
     }
 
-    // MULTI THREADED
+    // multithreaded version
     else {
-
+      final List<Future<Double>> futures = new ArrayList<>(SHAPE_CHILDREN.length);
+      for (ShapeNode child : SHAPE_CHILDREN) {
+        futures.add(executor.submit(
+            () ->
+                child.getBestMove(updatedRemainingDepth, beamWidth, executor).expectedValue / 7
+        ));
+      }
+      for (Future<Double> f : futures) { expectedValue += f.get(); }
     }
 
     return this;

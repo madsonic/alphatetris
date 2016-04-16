@@ -1,7 +1,8 @@
 package ga;
 
 import main.*;
-import sun.management.counter.Variability;
+import main.BoardNode;
+import main.PieceNode;
 
 // exactly the same as Player Two but with option of early termination after x moves.
 
@@ -24,7 +25,7 @@ public class PartialPlayerTwo {
 
         // initialize root
         // root always points to a PieceNode
-        PieceNode root = new PieceNode(bn, s.nextPiece);
+        PieceNode root = new PieceNode(bn, s.getNextPiece());
 
         // Initialize depth
         // every call to rootExpand expands the tree by 1 layer
@@ -49,7 +50,7 @@ public class PartialPlayerTwo {
           s.makeMove(root.getBestMove());
 
           total_reward += root.bestNode.bb.getReward();
-          root = root.setRootToBest(s.nextPiece);
+          root = root.setRootToBest(s.getNextPiece());
           // root.rootExpand();
           root.rootExpandAndUpdate();
         }
@@ -72,7 +73,7 @@ public class PartialPlayerTwo {
 
         // initialize root
         // root always points to a PieceNode
-        PieceNode root = new PieceNode(bn, s.nextPiece);
+        PieceNode root = new PieceNode(bn, s.getNextPiece());
 
         // Initialize depth
         // every call to rootExpand expands the tree by 1 layer
@@ -97,7 +98,7 @@ public class PartialPlayerTwo {
             s.draw();
             s.drawNext(0,0);
             
-            root = root.setRootToBest(s.nextPiece);
+            root = root.setRootToBest(s.getNextPiece());
             // root.rootExpand();
             root.rootExpandAndUpdate();
         }
@@ -124,7 +125,7 @@ public class PartialPlayerTwo {
 	
 	        // initialize root
 	        // root always points to a PieceNode
-	        PieceNode root = new PieceNode(bn, s.nextPiece);
+	        PieceNode root = new PieceNode(bn, s.getNextPiece());
 	
 	        // Initialize depth
 	        // every call to rootExpand expands the tree by 1 layer
@@ -150,7 +151,7 @@ public class PartialPlayerTwo {
               }
                s.makeMove(root.getBestMove());
                
-               root = root.setRootToBest(s.nextPiece);
+               root = root.setRootToBest(s.getNextPiece());
 //                root.rootExpand();
                root.rootExpandAndUpdate();
 //              s.draw();

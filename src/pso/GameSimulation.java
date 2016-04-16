@@ -27,7 +27,7 @@ public class GameSimulation {
 
 		//initialize root
 		//root always points to a PieceNode
-		PieceNode root = new PieceNode(bn, s.nextPiece);
+		PieceNode root = new PieceNode(bn, s.getNextPiece());
 
 		//Initialize depth
 		//every call to rootExpand expands the tree by 1 layer
@@ -45,7 +45,7 @@ public class GameSimulation {
 			s.makeMove(root.getBestMove());
 
 			total_reward+= root.bestNode.bb.getReward();
-			root = root.setRootToBest(s.nextPiece);
+			root = root.setRootToBest(s.getNextPiece());
 			//root.rootExpand();
 			root.rootExpandAndUpdate();
 		}
