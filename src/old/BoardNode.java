@@ -41,7 +41,7 @@ public class BoardNode implements Comparable<BoardNode>{
 	public double update() {
 		if (!childPieces[0].expanded) return score;
 		float expected = 0;
-		for (int i=0; i<State.N_PIECES;i++) {
+		for (int i = 0; i< State.N_PIECES; i++) {
 			expected += childPieces[i].update();
 		}
 		return expected/7;

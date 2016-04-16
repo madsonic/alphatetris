@@ -29,7 +29,7 @@ public class BitBoardCol {
 
 	//Initialize PIECE_BITS
 	static {
-		for (int p=0; p<State.N_PIECES; p++) {
+		for (int p = 0; p< State.N_PIECES; p++) {
 			for (int o = 0; o< P_ORIENTS[p]; o++) {
 				for (int c = 0; c< P_WIDTH[p][o]; c++) {
 					for(int h = P_BOTTOM[p][o][c]; h< P_TOP[p][o][c]; h++) {

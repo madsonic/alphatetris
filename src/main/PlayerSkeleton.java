@@ -1,7 +1,5 @@
 package main;
 
-import java.util.concurrent.ExecutionException;
-
 public class PlayerSkeleton {
 
 	final double[] WEIGHTS = {
@@ -18,19 +16,19 @@ public class PlayerSkeleton {
 			-2.8036583031140183
 	};
 
-	final int BEAM_WIDTH = 2;
+	final int BEAM_WIDTH = 3;
 	final int LOOKAHEAD_DEPTH = 1;
-	final boolean MULTITHREAD = false;
+	final boolean MULTITHREAD = true;
 	final BeamSearchAgent agent = BeamSearchAgent.makeDefaultAgent(
 			BEAM_WIDTH, LOOKAHEAD_DEPTH, WEIGHTS, MULTITHREAD
 	);
 
 	//implement this function to have a working system
-	public int[] pickMove(State s, int[][] legalMoves) throws ExecutionException, InterruptedException {
+	public int[] pickMove(State s, int[][] legalMoves) {
 		return agent.pickNextMove(s.getNextPiece());
 	}
 	
-	public static void main(String[] args) throws Exception {
+	public static void main(String[] args) {
 		State s = new State();
 		new TFrame(s);
 		PlayerSkeleton p = new PlayerSkeleton();
