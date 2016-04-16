@@ -1,8 +1,10 @@
 package ga;
 
-import main.*;
+import main.BitBoardCol;
 import main.BoardNode;
 import main.PieceNode;
+import main.State;
+import main.TFrame;
 
 // exactly the same as Player Two but with option of early termination after x moves.
 
