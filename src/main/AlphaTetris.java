@@ -1,7 +1,5 @@
 package main;
 
-import java.util.concurrent.*;
-
 /**
  * Controls the search tree (piecenodes and boardnodes)
  * Implements search logic.
@@ -11,30 +9,18 @@ public class AlphaTetris implements BeamSearchAgent {
   private double[] weights;
   private int maxDepth;
   private int beamWidth;
-
-  private final ExecutorService EXECUTOR;
+  private boolean parallel;
+  private int turnCount = 0;
 
   private MoveNode root;
 
-  public AlphaTetris(int beamWidth, int maxDepth, double[] weights, boolean concurrent) {
+  public AlphaTetris(int beamWidth, int maxDepth, double[] weights, boolean parallel) {
     if (beamWidth <= 0 || maxDepth < 0 || weights == null) throw new IllegalArgumentException();
     this.beamWidth = beamWidth;
     this.weights = weights;
     this.maxDepth = maxDepth;
     this.root = MoveNode.makeFirstNode(weights);
-
-    if (concurrent) {
-      int pcs = Runtime.getRuntime().availableProcessors();
-      EXECUTOR = new ThreadPoolExecutor(
-          pcs, pcs,
-          10, TimeUnit.SECONDS,
-          new ArrayBlockingQueue<Runnable>(pcs * 24, false),
-          new ThreadPoolExecutor.CallerRunsPolicy()
-      );
-      ((ThreadPoolExecutor)EXECUTOR).allowCoreThreadTimeOut(true);
-    } else {
-      EXECUTOR = null;
-    }
+    this.parallel = parallel;
   }
 
   /////////////////////////////////////////////
@@ -54,14 +40,23 @@ public class AlphaTetris implements BeamSearchAgent {
   @Override
   public double[] getWeights() { return weights.clone(); }
 
+  @Override
+  public void setParallel(boolean p) { this.parallel = p; }
+
   /////////////////////////////////////////////
   // search logic
   /////////////////////////////////////////////
 
   @Override
-  public int[] pickNextMove(int givenShape) throws ExecutionException, InterruptedException {
+  public int[] pickNextMove(int givenShape)  {
+    turnCount++;
     ShapeNode currentShape = root.getNextShapeNode(givenShape);
-    root = currentShape.getBestMove(maxDepth, beamWidth, EXECUTOR);
+    if (parallel) {
+      root = currentShape.makeBestMoveTask(maxDepth, beamWidth).performTask();
+    } else {
+      root = currentShape.getBestMoveSequential(maxDepth, beamWidth);
+    }
+//    if (turnCount % 10000 == 0) { System.gc(); }
     return root.MOVE;
   }
 

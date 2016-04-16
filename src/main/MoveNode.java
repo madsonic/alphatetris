@@ -2,16 +2,17 @@ package main;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Future;
+import java.util.concurrent.ForkJoinTask;
+import java.util.concurrent.RecursiveTask;
 
 class MoveNode implements Comparable<MoveNode> {
 
   final BitBoardCol MODEL;
   final int[] MOVE;
-  double expectedValue;
   final ShapeNode[] SHAPE_CHILDREN = new ShapeNode[State.N_PIECES];
+  final MoveNode SELF = this;
+
+  double expectedValue;
 
   static MoveNode makeFirstNode(double[] weights) {
     return new MoveNode(weights);
@@ -38,35 +39,54 @@ class MoveNode implements Comparable<MoveNode> {
   }
 
   // updates expected value and returns self
-  MoveNode updateExpectedValue(int remainingDepth, int beamWidth, ExecutorService executor) throws ExecutionException, InterruptedException {
-    if (remainingDepth == 0) {
-      return this;
-    }
+  MoveNode updateExpectedValueSequential(int remainingDepth, int beamWidth) {
+    if (remainingDepth == 0) { return SELF; }
 
     expectedValue = 0;
-    final int updatedRemainingDepth = remainingDepth - 1;
+    for (ShapeNode possibleShape : SHAPE_CHILDREN) {
+      expectedValue += possibleShape.getBestMoveSequential(remainingDepth - 1, beamWidth).expectedValue;
+    }
+    expectedValue /= State.N_PIECES;
+    return SELF;
+  }
 
-    // single threaded version
-    if (executor == null) {
-      for (ShapeNode possibleShape : SHAPE_CHILDREN) {
-        expectedValue += possibleShape.getBestMove(updatedRemainingDepth, beamWidth, executor).expectedValue;
-      }
-      expectedValue /= State.N_PIECES;
+  UpdateExpectedValueTask makeUpdateExpectedValueTask(int remainingDepth, int beamWidth) {
+    return new UpdateExpectedValueTask(remainingDepth, beamWidth);
+  }
+
+  class UpdateExpectedValueTask extends RecursiveTask<MoveNode> {
+    final int REMAINING_DEPTH;
+    final int BEAM_WIDTH;
+    UpdateExpectedValueTask(int remainingDepth, int beamWidth) {
+      REMAINING_DEPTH = remainingDepth;
+      BEAM_WIDTH = beamWidth;
     }
 
-    // multithreaded version
-    else {
-      final List<Future<Double>> futures = new ArrayList<>(SHAPE_CHILDREN.length);
-      for (ShapeNode child : SHAPE_CHILDREN) {
-        futures.add(executor.submit(
-            () ->
-                child.getBestMove(updatedRemainingDepth, beamWidth, executor).expectedValue / 7
-        ));
+    @Override
+    protected MoveNode compute() {
+      if (REMAINING_DEPTH == 0) {
+        return SELF;
       }
-      for (Future<Double> f : futures) { expectedValue += f.get(); }
+
+      expectedValue = 0;
+      final List<ForkJoinTask<MoveNode>> tasks = new ArrayList<>(SHAPE_CHILDREN.length);
+      for (int i=0; i<SHAPE_CHILDREN.length-1; i++) {
+        tasks.add(
+            SHAPE_CHILDREN[i].makeBestMoveTask(REMAINING_DEPTH - 1, BEAM_WIDTH)
+                .fork()
+        );
+      }
+      expectedValue += SHAPE_CHILDREN[SHAPE_CHILDREN.length-1]
+              .makeBestMoveTask(REMAINING_DEPTH - 1, BEAM_WIDTH)
+              .performTask()
+              .expectedValue / State.N_PIECES;
+      for (ForkJoinTask<MoveNode> task : tasks) {
+        expectedValue += task.join().expectedValue / State.N_PIECES;
+      }
+      return SELF;
     }
 
-    return this;
+    MoveNode performTask() { return compute(); }
   }
 
   ShapeNode getNextShapeNode(int shape) { return SHAPE_CHILDREN[shape]; }
@@ -77,5 +97,4 @@ class MoveNode implements Comparable<MoveNode> {
         : expectedValue > x.expectedValue ? 1
         : 0;
   }
-
 }

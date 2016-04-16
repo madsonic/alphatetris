@@ -2,12 +2,15 @@ package main;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.*;
+import java.util.concurrent.ForkJoinTask;
+import java.util.concurrent.PriorityBlockingQueue;
+import java.util.concurrent.RecursiveTask;
 
 class ShapeNode {
 
   final BitBoardCol MODEL;
   final int SHAPE;
+  final ShapeNode SELF = this;
 
   MoveNode[] moveChildren = {};
 
@@ -16,80 +19,78 @@ class ShapeNode {
     SHAPE = shape;
   }
 
-  MoveNode getBestMove(int remainingDepth, int beamWidth, ExecutorService executor) throws ExecutionException, InterruptedException {
-
-    if (moveChildren.length != beamWidth) { // not yet expanded or beam width changed
-      generateChildren(beamWidth, executor);
+  MoveNode getBestMoveSequential(int remainingDepth, int beamWidth) {
+    if (moveChildren.length != beamWidth) {
+      moveChildren = generateChildren(beamWidth, SELF);
     }
-    MoveNode best;
-
-    // single threaded version
-    if (executor == null || remainingDepth == 0) { // dont split to threads at final level; not enough efficiency gain
-      for (MoveNode child : moveChildren) {
-        child.updateExpectedValue(remainingDepth, beamWidth, executor);
-      }
-      best = moveChildren[0];
-      for (MoveNode child : moveChildren) {
-        if (child.compareTo(best) > 0) { best = child; }
-      }
+    for (MoveNode child : moveChildren) {
+      child.updateExpectedValueSequential(remainingDepth, beamWidth);
     }
-
-    // multithreaded version
-    else {
-      final List<Future<MoveNode>> futures = new ArrayList<>(moveChildren.length);
-      for (MoveNode child : moveChildren) {
-        futures.add(executor.submit(
-            () ->
-                child.updateExpectedValue(remainingDepth, beamWidth, executor)
-        ));
-      }
-      best = futures.get(0).get();
-      MoveNode current;
-      for (Future<MoveNode> f : futures) {
-        current = f.get();
-        if (current.compareTo(best) > 0) { best = current; }
-      }
+    MoveNode best = moveChildren[0];
+    for (MoveNode child : moveChildren) {
+      if (child.compareTo(best) > 0) { best = child; }
     }
-
     return best;
   }
 
+  GetBestMoveTask makeBestMoveTask(int remainingDepth, int beamWidth) {
+    return new GetBestMoveTask(remainingDepth, beamWidth);
+  }
+
+  class GetBestMoveTask extends RecursiveTask<MoveNode> {
+    final int REMAINING_DEPTH;
+    final int BEAM_WIDTH;
+    GetBestMoveTask(int remainingDepth, int beamWidth) {
+      REMAINING_DEPTH = remainingDepth;
+      BEAM_WIDTH = beamWidth;
+    }
+
+    @Override
+    protected MoveNode compute() {
+      if (REMAINING_DEPTH == 0) {
+        return getBestMoveSequential(REMAINING_DEPTH, BEAM_WIDTH);
+      }
+
+      if (moveChildren.length != BEAM_WIDTH) {
+        moveChildren = generateChildren(BEAM_WIDTH, SELF);
+      }
+
+      final List<ForkJoinTask<MoveNode>> tasks = new ArrayList<>(moveChildren.length-1);
+      for (int i=0; i<moveChildren.length-1; i++) {
+        tasks.add(
+            moveChildren[i].makeUpdateExpectedValueTask(REMAINING_DEPTH, BEAM_WIDTH)
+                 .fork()
+        );
+      }
+
+      MoveNode best = moveChildren[moveChildren.length-1]
+          .makeUpdateExpectedValueTask(REMAINING_DEPTH, BEAM_WIDTH)
+          .performTask();
+      for (ForkJoinTask<MoveNode> task : tasks) {
+        final MoveNode currentMove = task.join();
+        if (currentMove.compareTo(best) > 0) { best = currentMove; }
+      }
+      return best;
+    }
+
+    MoveNode performTask() { return compute(); }
+
+  }
+
   // calculates immediate heuristic values of all possible next moves,
-  // prunes to beam width size, saves to moveChildrem
-  private void generateChildren(int beamWidth, ExecutorService executor) throws ExecutionException, InterruptedException {
-    final int[][] legalMoves = State.legalMoves[SHAPE];
+  // prunes to beam width size
+  public static MoveNode[] generateChildren(int beamWidth, ShapeNode parent) {
+    final int[][] legalMoves = State.legalMoves[parent.SHAPE];
     final PriorityBlockingQueue<MoveNode> pq = new PriorityBlockingQueue<>(40);
 
-    // single threaded version
-//    if (executor == null) {
-      for (int i = 0; i < legalMoves.length; i++) {
-        pq.add(new MoveNode(legalMoves[i], this));
-        if (pq.size() > beamWidth) {
-          pq.poll();
-        }
+    for (int i = 0; i < legalMoves.length; i++) {
+      pq.add(new MoveNode(legalMoves[i], parent));
+      if (pq.size() > beamWidth) {
+        pq.poll();
       }
-//    }
-
-    // multithreaded version
-//    else {
-//      final ShapeNode self = this;
-//      int numTasks = legalMoves.length/10;
-//      if (numTasks == 0) { numTasks = 1; }
-//
-//      final Future<?>[] futures = new Future[numTasks];
-//      for (int i = 0; i < numTasks; i++) {
-//        final int taskNum = i;
-//        // each thread gets 10-20 MoveNode creations and insertions to the priority queue
-//        futures[i] = executor.submit(()->{
-//            for (int child = 10*taskNum; child < (10*taskNum) + 10 && child < legalMoves.length; child++) {
-//              pq.add(new MoveNode(legalMoves[child], self));
-//            }
-//        });
-//      }
-//      for (Future<?> f : futures) { f.get(); } // wait for computations to finish
-//      while (pq.size() > beamWidth) { pq.poll(); } // trim to beam width count
-//    }
-
-    moveChildren = pq.toArray(new MoveNode[0]);
+    }
+    return pq.toArray(new MoveNode[0]);
   }
 }
+
+

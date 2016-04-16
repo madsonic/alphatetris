@@ -1,7 +1,5 @@
 package main;
 
-import java.util.concurrent.ExecutionException;
-
 public interface BeamSearchAgent {
 
   static BeamSearchAgent makeDefaultAgent(int beamWidth, int maxDepth, double[] weights, boolean concurrent) {
@@ -17,11 +15,13 @@ public interface BeamSearchAgent {
   // sets heuristic weights
   void setWeights(double[] weights);
   double[] getWeights();
+  //
+  void setParallel(boolean parallel);
 
   // does not sync with State; agent follows its internal model.
-  int[] pickNextMove(int givenShape) throws ExecutionException, InterruptedException;
+  int[] pickNextMove(int givenShape);
 
-  static void main(String[] args) throws ExecutionException, InterruptedException {
+  static void main(String[] args) {
     // best weights so far
     final double[] WEIGHTS = {
         -1.4101417483877365,
