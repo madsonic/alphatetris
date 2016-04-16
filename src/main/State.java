@@ -38,7 +38,7 @@ public class State {
 	//all legal moves - first index is piece type - then a list of 2-length arrays
 	protected static int[][][] legalMoves = new int[N_PIECES][][];
 
-	//indices for legalMoves
+	//indices for LEGAL_MOVES
 	public static final int ORIENT = 0;
 	public static final int SLOT = 1;
 
@@ -85,7 +85,7 @@ public class State {
 			{{2,2,1},{2,3}}
 	};
 
-	//initialize legalMoves
+	//initialize LEGAL_MOVES
 	{
 		//for each piece type
 		for(int i = 0; i < N_PIECES; i++) {
@@ -177,7 +177,7 @@ public class State {
 		return legalMoves[nextPiece];
 	}
 
-	//make a move based on the move index - its order in the legalMoves list
+	//make a move based on the move index - its order in the LEGAL_MOVES list
 	public void makeMove(int move) {
 		makeMove(legalMoves[nextPiece][move]);
 	}

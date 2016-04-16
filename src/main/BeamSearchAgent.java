@@ -37,9 +37,15 @@ public interface BeamSearchAgent {
         -2.8036583031140183
     };
 
-    final int BEAM_WIDTH = 2;
-    final int LOOKAHEAD_DEPTH = 1;
-    final boolean MULTITHREAD = false;
+    int BEAM_WIDTH = 2;
+    int LOOKAHEAD_DEPTH = 1;
+    boolean MULTITHREAD = true;
+
+    if (args.length > 0) {
+      BEAM_WIDTH = Integer.parseInt(args[0]);
+      LOOKAHEAD_DEPTH = Integer.parseInt(args[1]);
+      MULTITHREAD = args[2].equals("multi");
+    }
 
     BeamSearchAgent agent = makeDefaultAgent(BEAM_WIDTH, LOOKAHEAD_DEPTH, WEIGHTS, MULTITHREAD);
     State s = new State();

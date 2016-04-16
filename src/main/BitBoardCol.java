@@ -6,6 +6,75 @@ public class BitBoardCol {
 	final static int COLS = 10;
 	final static int ROWS = 20;
 
+	/**
+	 * The 7 piece shapes by index:
+	 * 0: O
+	 * 1: I
+	 * 2: L
+	 * 3: J
+	 * 4: T
+	 * 5: S
+	 * 6: Z
+	 */
+
+	//States for the 7 pieces
+	public static final int[] P_ORIENTS = State.getpOrients();
+	public static final int[][] P_WIDTH = State.getpWidth();
+	public static final int[][] P_HEIGHT = State.getpHeight();
+	public static final int[][][] P_BOTTOM = State.getpBottom();
+	public static final int[][][] P_TOP = State.getpTop();
+
+	//PIECE_BITS[#pieces][#orient][#width][#height]
+	public static final int PIECE_BITS[][][][] = new int[7][4][4][ROWS];
+
+	//Initialize PIECE_BITS
+	static {
+		for (int p=0; p<State.N_PIECES; p++) {
+			for (int o = 0; o< P_ORIENTS[p]; o++) {
+				for (int c = 0; c< P_WIDTH[p][o]; c++) {
+					for(int h = P_BOTTOM[p][o][c]; h< P_TOP[p][o][c]; h++) {
+						PIECE_BITS[p][o][c][0] |= 1 << h; //
+					}
+					for (int r=0; r<ROWS; r++) {
+						PIECE_BITS[p][o][c][r] = PIECE_BITS[p][o][c][0] << r;
+					}
+				}
+			}
+		}
+	}
+
+	static int getBit( int bitCol, int rowIndex) {
+		return (bitCol >> rowIndex) & 1;
+	}
+
+	//all legal moves - first index is piece type - then a list of 2-length arrays
+	public static final int[][][] LEGAL_MOVES = new int[State.N_PIECES][][];
+
+	//initialize LEGAL_MOVES
+	static {
+		//for each piece type
+		for(int i = 0; i < State.N_PIECES; i++) {
+			//figure number of legal moves
+			int n = 0;
+			for(int j = 0; j < P_ORIENTS[i]; j++) {
+				//number of locations in this orientation
+				n += COLS+1-P_WIDTH[i][j];
+			}
+			//allocate space
+			LEGAL_MOVES[i] = new int[n][2];
+			//for each orientation
+			n = 0;
+			for(int j = 0; j < P_ORIENTS[i]; j++) {
+				//for each slot
+				for(int k = 0; k < COLS+1-P_WIDTH[i][j];k++) {
+					LEGAL_MOVES[i][n][State.ORIENT] = j;
+					LEGAL_MOVES[i][n][State.SLOT] = k;
+					n++;
+				}
+			}
+		}
+	}
+	
 	//Board representation
 	private int[] field;
 	private int[] top;
@@ -40,48 +109,6 @@ public class BitBoardCol {
 	int side_bump;
 	int bumpiness;
 	int well;
-
-
-	/**
-	 * The 7 piece shapes by index:
-	 * 0: O
-	 * 1: I
-	 * 2: L
-	 * 3: J
-	 * 4: T
-	 * 5: S
-	 * 6: Z
-	 */
-
-	//States for the 7 pieces
-	final static int[] P_ORIENTS = State.getpOrients();
-	final static int[][] P_WIDTH = State.getpWidth();
-	final static int[][] P_HEIGHT = State.getpHeight();
-	final static int[][][] P_BOTTOM = State.getpBottom();
-	final static int[][][] P_TOP = State.getpTop();
-
-	//PIECE_BITS[#pieces][#orient][#width][#height]
-	final static int PIECE_BITS[][][][] = new int[7][4][4][ROWS];
-
-	//Initialize PIECE_BITS
-	static {
-		for (int p=0; p<State.N_PIECES; p++) {
-			for (int o = 0; o< P_ORIENTS[p]; o++) {
-				for (int c = 0; c< P_WIDTH[p][o]; c++) {
-					for(int h = P_BOTTOM[p][o][c]; h< P_TOP[p][o][c]; h++) {
-						PIECE_BITS[p][o][c][0] |= 1 << h; //
-					}
-					for (int r=0; r<ROWS; r++) {
-						PIECE_BITS[p][o][c][r] = PIECE_BITS[p][o][c][0] << r;
-					}
-				}
-			}
-		}
-	}
-
-	static int getBit( int bitCol, int rowIndex) {
-		return (bitCol >> rowIndex) & 1;
-	}
 
 	//Constructor
 	public BitBoardCol(int[] field, int[] top, double[] weights) {

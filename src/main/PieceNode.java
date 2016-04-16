@@ -29,7 +29,7 @@ public class PieceNode {
 	public void generateChildBoards() {
 		expanded = true;
 		PriorityQueue<BoardNode> pq = new PriorityQueue<BoardNode>(32);
-		int[][] moves = State.legalMoves[pieceIndex];
+		int[][] moves = BitBoardCol.LEGAL_MOVES[pieceIndex];
 
 		for (int i = 0; i < CHILD_NO; i++) {
 			pq.add(new BoardNode(this,moves[i]));

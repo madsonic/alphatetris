@@ -80,7 +80,7 @@ class ShapeNode {
   // calculates immediate heuristic values of all possible next moves,
   // prunes to beam width size
   public static MoveNode[] generateChildren(int beamWidth, ShapeNode parent) {
-    final int[][] legalMoves = State.legalMoves[parent.SHAPE];
+    final int[][] legalMoves = BitBoardCol.LEGAL_MOVES[parent.SHAPE];
     final PriorityBlockingQueue<MoveNode> pq = new PriorityBlockingQueue<>(40);
 
     for (int i = 0; i < legalMoves.length; i++) {
