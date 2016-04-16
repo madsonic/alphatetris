@@ -1,6 +1,6 @@
 package ga;
 
-import main.PlayerTwo;
+import old.PlayerTwo;
 
 import org.jgap.FitnessFunction;
 import org.jgap.IChromosome;

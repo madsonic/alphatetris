@@ -1,4 +1,6 @@
-package main;
+package old;
+
+import main.BitBoardCol;
 
 import java.util.PriorityQueue;
 

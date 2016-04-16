@@ -1,4 +1,10 @@
-package main;
+package old;
+
+import main.BitBoardCol;
+import main.State;
+import main.TFrame;
+import old.BoardNode;
+import old.PieceNode;
 
 import java.util.Arrays;
 

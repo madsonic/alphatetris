@@ -1,4 +1,4 @@
-package main;
+package old;
 //BitBoard interface
 //Heuristic function is located here since
 //the calculation is closely tied to the board state.

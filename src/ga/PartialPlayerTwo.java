@@ -1,8 +1,8 @@
 package ga;
 
 import main.BitBoardCol;
-import main.BoardNode;
-import main.PieceNode;
+import old.BoardNode;
+import old.PieceNode;
 import main.State;
 import main.TFrame;
 import main.BeamSearchAgent;

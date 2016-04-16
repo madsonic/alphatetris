@@ -1,4 +1,7 @@
-package main;
+package old;
+
+import main.BitBoardCol;
+import main.State;
 
 //Expected/min player
 //Given board, get expected score.
